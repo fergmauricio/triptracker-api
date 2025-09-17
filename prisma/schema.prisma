@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model carddefault {
+  id_card_default Int        @id @default(autoincrement())
+  title           String     @db.VarChar(100)
+  active          Boolean    @default(true)
+  tripcard        tripcard[]
+}
+
+model coment {
+  id_comment  Int      @id @default(autoincrement())
+  id_card     Int
+  id_user     Int
+  description String   @db.LongText
+  created_at  DateTime @default(now())
+  tripcard    tripcard @relation(fields: [id_card], references: [id_trip_card])
+  user        user     @relation(fields: [id_user], references: [id_user])
+
+  @@index([id_card], map: "coment_id_card_fkey")
+  @@index([id_user], map: "coment_id_user_fkey")
+}
+
+model password_reset_tokens {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+  user       user     @relation(fields: [user_id], references: [id_user], onDelete: Cascade)
+
+  @@index([token])
+  @@index([user_id])
+}
+
+model trip {
+  id_trip     Int         @id @default(autoincrement())
+  title       String      @db.VarChar(100)
+  thumb       String?     @db.VarChar(200)
+  description String?     @db.LongText
+  start_date  DateTime?
+  end_date    DateTime?
+  created_at  DateTime?   @default(now())
+  updated_at  DateTime?
+  user_id     Int?
+  user        user?       @relation(fields: [user_id], references: [id_user])
+  tripcard    tripcard[]
+  usertrips   usertrips[]
+
+  @@index([user_id], map: "trip_user_id_fkey")
+}
+
+model tripcard {
+  id_trip_card    Int         @id @default(autoincrement())
+  id_trip         Int
+  id_card_default Int
+  title           String?     @db.VarChar(200)
+  description     String?     @db.LongText
+  coment          coment[]
+  carddefault     carddefault @relation(fields: [id_card_default], references: [id_card_default])
+  trip            trip        @relation(fields: [id_trip], references: [id_trip])
+
+  @@index([id_card_default], map: "tripcard_id_card_default_fkey")
+  @@index([id_trip], map: "tripcard_id_trip_fkey")
+}
+
+model user {
+  id_user               Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(100)
+  email                 String                  @unique @db.VarChar(100)
+  thumb                 String?                 @db.VarChar(200)
+  password              String                  @db.LongText
+  active                Boolean                 @default(true)
+  coment                coment[]
+  password_reset_tokens password_reset_tokens[]
+  trip                  trip[]
+  usertrips             usertrips[]
+}
+
+model usertrips {
+  id_user_trips Int  @id @default(autoincrement())
+  id_user       Int
+  id_trip       Int
+  trip          trip @relation(fields: [id_trip], references: [id_trip])
+  user          user @relation(fields: [id_user], references: [id_user])
+
+  @@index([id_trip], map: "usertrips_id_trip_fkey")
+  @@index([id_user], map: "usertrips_id_user_fkey")
+}
