@@ -1,19 +1,31 @@
 version: '3.8'
 
 services:
+  app:
+    build: .
+    container_name: triptracker-api
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.production # Carrega variáveis do arquivo
+    depends_on:
+      - database
+      - redis
+    networks:
+      - triptracker-network
+
   database:
     image: mysql:8.0
     container_name: triptracker-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: Pedra123
+      MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: triptracker
       MYSQL_USER: user
       MYSQL_PASSWORD: pass123
       MYSQL_TCP_PORT: 3306
       TZ: America/Sao_Paulo
-    ports:
-      - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -23,16 +35,11 @@ services:
     image: redis:7-alpine
     container_name: triptracker-redis
     restart: unless-stopped
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis_data:/data
     networks:
       - triptracker-network
 
 volumes:
   mysql_data:
-  redis_data:
 
 networks:
   triptracker-network:
