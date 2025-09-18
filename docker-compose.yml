@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: triptracker-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: triptracker
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - triptracker-network
+
+  # Serviço do Redis (para filas e cache)
+  redis:
+    image: redis:7-alpine
+    container_name: triptracker-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - triptracker-network
+
+# Volumes para persistir os dados mesmo se o container for parado
+volumes:
+  mysql_data:
+  redis_data:
+
+# Rede para os containers se comunicarem
+networks:
+  triptracker-network:
+    driver: bridge
