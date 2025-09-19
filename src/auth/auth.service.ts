@@ -1,4 +1,3 @@
-// src/auth/auth.service.ts
 import {
   Injectable,
   UnauthorizedException,
@@ -68,12 +67,15 @@ export class AuthService {
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
     const { email } = forgotPasswordDto;
 
-    // 1. Verifique se o usuário existe
+    console.log('Solicitação de reset para:', email);
+
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
-      // Por segurança, não revele se o email existe ou não
+      console.log('Usuário não encontrado:', email);
       return { message: 'Se o email existir, um link de reset será enviado' };
     }
+
+    console.log('Usuário encontrado, criando token...');
 
     // 2. Gere um token único
     const token = crypto.randomBytes(32).toString('hex');

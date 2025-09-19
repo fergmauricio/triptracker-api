@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
 import { EmailWorkerService } from './workers/email-worker.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EmailWorkerService } from './workers/email-worker.service';
     }),
     PrismaModule,
     QueueModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [EmailWorkerService],

@@ -1,13 +1,17 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { Worker } from 'bullmq';
 import { ConfigService } from '@nestjs/config';
+import { EmailService } from '../email/email/email.service';
 
 @Injectable()
 export class EmailWorkerService implements OnModuleInit {
   private readonly logger = new Logger(EmailWorkerService.name);
   private worker: Worker;
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private emailService: EmailService,
+  ) {}
 
   async onModuleInit() {
     this.startWorker();
@@ -43,10 +47,12 @@ export class EmailWorkerService implements OnModuleInit {
     });
 
     this.worker.on('failed', (job, error) => {
-      this.logger.error(
-        `Job ${job.id} (${job.name}) falhou: ${error.message}`,
-        error.stack,
-      );
+      if (job) {
+        this.logger.error(
+          `Job ${job.id} (${job.name}) falhou: ${error.message}`,
+          error.stack,
+        );
+      }
     });
 
     this.worker.on('error', (error) => {
@@ -54,30 +60,31 @@ export class EmailWorkerService implements OnModuleInit {
     });
   }
 
-  // Função que processa o job específico de reset de senha
   private async handleSendPasswordResetEmail(job: any) {
     const { email, token, userName } = job.data;
 
-    this.logger.log(`Preparando para enviar email de reset para: ${email}`);
+    this.logger.log(`Processando email de reset para: ${email}`);
 
-    // LINK SIMULADO
-    const resetLink = `http://localhost:3000/auth/reset-password?token=${token}`;
+    // Gera o link de reset (ajuste a URL para sua aplicação)
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
 
-    // SIMULAÇÃO do envio de email
-    this.logger.log('=== EMAIL SIMULADO (IMPLEMENTAR SERVIÇO REAL AQUI) ===');
-    this.logger.log(`Para: ${email}`);
-    this.logger.log(`Assunto: Recuperação de Senha - TripTracker`);
-    this.logger.log(`Olá ${userName || 'usuário'},`);
-    this.logger.log(`Clique no link para redefinir sua senha: ${resetLink}`);
-    this.logger.log('====================================================');
+    try {
+      // Usa o serviço real de email
+      const success = await this.emailService.sendPasswordResetEmail(
+        email,
+        resetLink,
+        userName,
+      );
 
-    // Aqui vai a integração com SendGrid, Resend, etc.
-    // await this.emailService.sendPasswordResetEmail(email, resetLink, userName);
-
-    // Simula um delay de processamento de 2 segundos
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    this.logger.log(`Email simulado enviado para: ${email}`);
+      if (success) {
+        this.logger.log(`Email enviado com sucesso para: ${email}`);
+      } else {
+        throw new Error('Falha ao enviar email');
+      }
+    } catch (error) {
+      this.logger.error(`Falha ao processar email para ${email}:`, error);
+      throw error; // Faz o job falhar e ser retentado
+    }
   }
 
   // Método para parar o worker graciosamente
