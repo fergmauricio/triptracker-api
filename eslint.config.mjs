@@ -34,15 +34,6 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       'linebreak-style': ['error', 'unix'],
-      'prettier/prettier': [
-        'error',
-        {
-          endOfLine: 'lf', // Força o Prettier a usar LF
-        },
-        {
-          usePrettierrc: false, // Importante: não usar arquivo .prettierrc
-        },
-      ],
     },
   },
 );

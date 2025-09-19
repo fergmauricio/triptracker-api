@@ -8,7 +8,7 @@ export class EmailService implements OnModuleInit {
 
   constructor() {}
 
-  async onModuleInit() {
+  onModuleInit() {
     if (process.env.SENDGRID_API_KEY) {
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
       this.logger.log('SendGrid configurado com sucesso');
