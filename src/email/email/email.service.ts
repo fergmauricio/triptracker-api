@@ -1,22 +1,15 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import sgMail from '@sendgrid/mail';
-import { MailDataRequired } from '@sendgrid/helpers/classes/mail';
+import { Injectable, Logger } from '@nestjs/common';
+import * as sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
 @Injectable()
-export class EmailService implements OnModuleInit {
+export class EmailService {
   private readonly logger = new Logger(EmailService.name);
+  private readonly provider: string;
 
-  constructor() {}
-
-  onModuleInit() {
-    if (process.env.SENDGRID_API_KEY) {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-      this.logger.log('SendGrid configurado com sucesso');
-    } else {
-      this.logger.warn(
-        'SENDGRID_API_KEY não encontrada. Emails não serão enviados.',
-      );
-    }
+  constructor() {
+    this.provider = process.env.EMAIL_PROVIDER || 'resend';
+    this.logger.log(`Provedor de email configurado: ${this.provider}`);
   }
 
   async sendPasswordResetEmail(
@@ -24,39 +17,80 @@ export class EmailService implements OnModuleInit {
     resetLink: string,
     userName?: string,
   ): Promise<boolean> {
-    // 1. VALIDAÇÃO: Garante que a API Key e FROM_EMAIL existem
-    if (!process.env.SENDGRID_API_KEY) {
-      this.logger.error('SendGrid não configurado. Email não enviado.');
-      return false;
-    }
-
-    const fromEmail = process.env.FROM_EMAIL;
-    if (!fromEmail) {
-      this.logger.error('FROM_EMAIL não configurado no .env');
-      return false;
-    }
-
-    // 2. Garante que userName não seja undefined
     const safeUserName = userName || 'usuário';
 
-    // 3. Tipagem CORRETA para o objeto de email
-    const msg: MailDataRequired = {
-      to: email,
-      from: fromEmail, // Agora é string, não string | undefined
-      subject: 'Recuperação de Senha - TripTracker',
-      html: this.getPasswordResetTemplate(safeUserName, resetLink),
-      text: `Olá ${safeUserName}! Para redefinir sua senha, acesse: ${resetLink}. Este link expira em 1 hora.`,
-    };
+    switch (this.provider) {
+      case 'sendgrid':
+        return this.sendWithSendGrid(email, resetLink, safeUserName);
+      case 'resend':
+        return this.sendWithResend(email, resetLink, safeUserName);
+      default:
+        this.logger.error(`Provedor de email desconhecido: ${this.provider}`);
+        return false;
+    }
+  }
+
+  private async sendWithSendGrid(
+    email: string,
+    resetLink: string,
+    userName: string,
+  ): Promise<boolean> {
+    if (!process.env.SENDGRID_API_KEY) {
+      this.logger.error('SENDGRID_API_KEY não configurada');
+      return false;
+    }
 
     try {
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+      const msg = {
+        to: email,
+        from: process.env.FROM_EMAIL_SENDGRID || 'mauricioferg@gmail.com',
+        subject: 'Recuperação de Senha - TripTracker',
+        html: this.getPasswordResetTemplate(userName, resetLink),
+        text: `Olá ${userName}! Para redefinir sua senha, acesse: ${resetLink}`,
+      };
+
       await sgMail.send(msg);
-      this.logger.log(`✅ Email de recuperação enviado para: ${email}`);
+      this.logger.log(`Email enviado via SendGrid para: ${email}`);
       return true;
     } catch (error) {
-      this.logger.error(
-        `❌ Erro ao enviar email para ${email}:`,
-        error.response?.body || error.message,
-      );
+      this.logger.error(`Erro no SendGrid: ${error.message}`);
+      return false;
+    }
+  }
+
+  private async sendWithResend(
+    email: string,
+    resetLink: string,
+    userName: string,
+  ): Promise<boolean> {
+    if (!process.env.RESEND_API_KEY) {
+      this.logger.error('RESEND_API_KEY não configurada');
+      return false;
+    }
+
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      const { data, error } = await resend.emails.send({
+        from: process.env.FROM_EMAIL_RESEND || 'onboarding@resend.dev',
+        to: email,
+        subject: 'Recuperação de Senha - TripTracker',
+        html: this.getPasswordResetTemplate(userName, resetLink),
+        text: `Olá ${userName}! Para redefinir sua senha, acesse: ${resetLink}`,
+      });
+
+      if (error) {
+        this.logger.error(`Erro no Resend: ${error.message}`);
+        return false;
+      }
+
+      this.logger.log(`✅ Email enviado via Resend para: ${email}`);
+      this.logger.log(`📨 ID: ${data?.id}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Erro no Resend: ${error.message}`);
       return false;
     }
   }
