@@ -6,6 +6,7 @@ import { QueueModule } from './queue/queue.module';
 import { EmailWorkerService } from './workers/email-worker.service';
 import { EmailModule } from './email/email.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
+import { AwsS3Module } from './aws-s3/aws-s3.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
     QueueModule,
     EmailModule,
     RabbitMQModule,
+    AwsS3Module,
   ],
   controllers: [],
   providers: [EmailWorkerService],
