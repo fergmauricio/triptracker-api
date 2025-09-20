@@ -1,75 +1,35 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import { Worker } from 'bullmq';
-import { ConfigService } from '@nestjs/config';
+import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
 import { EmailService } from '../email/email/email.service';
 
 @Injectable()
 export class EmailWorkerService implements OnModuleInit {
   private readonly logger = new Logger(EmailWorkerService.name);
-  private worker: Worker;
 
   constructor(
-    private configService: ConfigService,
+    private rabbitMQService: RabbitMQService,
     private emailService: EmailService,
   ) {}
 
-  async onModuleInit() {
+  onModuleInit() {
     this.startWorker();
   }
 
-  private startWorker() {
-    // Cria uma instância do Worker conectada ao Redis
-    // O worker fica "escutando" a fila 'email' por jobs do tipo 'send-password-reset'
-    this.worker = new Worker(
-      'email', // Nome da fila que ele vai escutar
-      async (job) => {
-        // Esta função é executada quando um job chega na fila
-        await this.handleSendPasswordResetEmail(job);
-      },
-      {
-        connection: {
-          host: this.configService.get('REDIS_HOST'),
-          port: this.configService.get('REDIS_PORT'),
-        },
-
-        concurrency: 5, // Processa até 5 jobs simultaneamente
-        autorun: true, // Inicia automaticamente
-      },
-    );
-
-    // Eventos para logging e debug
-    this.worker.on('ready', () => {
-      this.logger.log('Worker de email pronto e ouvindo a fila...');
+  private async startWorker() {
+    // Nova implementação com RabbitMQ
+    await this.rabbitMQService.consumeEmailJobs(async (data) => {
+      await this.handleSendPasswordResetEmail(data);
     });
-
-    this.worker.on('completed', (job) => {
-      this.logger.log(`Job ${job.id} (${job.name}) completado com sucesso`);
-    });
-
-    this.worker.on('failed', (job, error) => {
-      if (job) {
-        this.logger.error(
-          `Job ${job.id} (${job.name}) falhou: ${error.message}`,
-          error.stack,
-        );
-      }
-    });
-
-    this.worker.on('error', (error) => {
-      this.logger.error(`Erro no worker: ${error.message}`, error.stack);
-    });
+    this.logger.log('Worker de email ouvindo RabbitMQ...');
   }
 
-  private async handleSendPasswordResetEmail(job: any) {
-    const { email, token, userName } = job.data;
-
+  private async handleSendPasswordResetEmail(data: any) {
+    const { email, token, userName } = data;
     this.logger.log(`Processando email de reset para: ${email}`);
 
-    // Gera o link de reset (ajuste a URL para sua aplicação)
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
 
     try {
-      // Usa o serviço real de email
       const success = await this.emailService.sendPasswordResetEmail(
         email,
         resetLink,
@@ -83,14 +43,7 @@ export class EmailWorkerService implements OnModuleInit {
       }
     } catch (error) {
       this.logger.error(`Falha ao processar email para ${email}:`, error);
-      throw error; // Faz o job falhar e ser retentado
-    }
-  }
-
-  // Método para parar o worker graciosamente
-  async onApplicationShutdown() {
-    if (this.worker) {
-      await this.worker.close();
+      throw error;
     }
   }
 }

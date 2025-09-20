@@ -1,13 +1,11 @@
-// src/queue/queue.service.ts
 import { Injectable } from '@nestjs/common';
-import { Queue } from 'bullmq';
-import { InjectQueue } from '@nestjs/bullmq';
+import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class QueueService {
-  constructor(@InjectQueue('email') private readonly emailQueue: Queue) {}
+  constructor(private rabbitMQService: RabbitMQService) {}
 
   async addEmailJob(data: any) {
-    await this.emailQueue.add('send-password-reset', data);
+    await this.rabbitMQService.publishEmailJob(data);
   }
 }
