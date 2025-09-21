@@ -9,9 +9,6 @@ COPY prisma ./prisma/
 # 2. Instalar dependências de PRODUÇÃO
 RUN npm ci --only=production
 
-# 3. Gerar Prisma client
-# RUN npx prisma generate
-
 # 4. Copiar o restante do código
 COPY . .
 
@@ -21,5 +18,5 @@ RUN npm run build
 # 6. Expor a porta
 EXPOSE 3000
 
-# 7. Comando para rodar a aplicação
+# 7. Comando para rodar a aplicação (gera Prisma NO RUNTIME)
 CMD npx prisma generate && npm run start:prod
