@@ -21,10 +21,7 @@ export class AwsS3Service {
     const bucketName = this.configService.get('AWS_S3_BUCKET_NAME');
 
     if (!region || !accessKeyId || !secretAccessKey || !bucketName) {
-      throw new Error(
-        'Variáveis de ambiente AWS não configuradas. ' +
-          'Verifique: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME',
-      );
+      throw new Error('Variáveis de ambiente AWS não configuradas. ');
     }
 
     this.s3Client = new S3Client({
