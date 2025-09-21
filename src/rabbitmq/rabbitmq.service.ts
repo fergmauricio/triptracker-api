@@ -4,8 +4,7 @@ import {
   OnModuleDestroy,
   Logger,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { connect, Channel, Connection } from 'amqplib';
+import { connect, Connection, Channel } from 'amqplib';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
@@ -13,71 +12,65 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private connection: Connection;
   private channel: Channel;
 
-  constructor(private configService: ConfigService) {}
-
   async onModuleInit() {
     try {
-      const rabbitmqUrl = this.configService.get('RABBITMQ_URL');
+      const rabbitmqUrl = process.env.RABBITMQ_URL;
 
       if (!rabbitmqUrl) {
-        this.logger.error(
-          'RABBITMQ_URL não configurada nas variáveis de ambiente',
-        );
-        this.logger.warn(' Serviço de mensageria desabilitado');
-        return;
+        throw new Error('RABBITMQ_URL não configurada');
       }
 
       this.connection = await connect(rabbitmqUrl);
       this.channel = await this.connection.createChannel();
 
-      await this.channel.assertExchange('trip_events', 'direct', {
-        durable: true,
-      });
-      await this.channel.assertQueue('email_queue', { durable: true });
-      await this.channel.bindQueue(
-        'email_queue',
-        'trip_events',
-        'send-password-reset',
-      );
+      // Configura exchange e queues
+      await this.setupQueues();
 
-      this.logger.log('RabbitMQ conectado e configurado');
+      this.logger.log('Conectado ao CloudAMQP com sucesso!');
     } catch (error) {
-      this.logger.error('Erro ao conectar com RabbitMQ:', error);
+      this.logger.error('Erro ao conectar com CloudAMQP:', error);
+      // Não throw error - permite app rodar sem RabbitMQ
     }
   }
 
-  async publishEmailJob(data: any) {
-    try {
-      this.channel.publish(
-        'trip_events',
-        'send-password-reset',
-        Buffer.from(JSON.stringify(data)),
-        { persistent: true }, // Mensagem sobrevive a reinícios
-      );
-      this.logger.log('📨 Job de email enviado para RabbitMQ');
-    } catch (error) {
-      this.logger.error('❌ Erro ao publicar job:', error);
-      throw error;
-    }
+  getChannel(): Channel | null {
+    return this.channel || null;
   }
 
-  async consumeEmailJobs(callback: (data: any) => Promise<void>) {
-    try {
-      await this.channel.consume('email_queue', async (message) => {
-        if (message) {
-          try {
-            const data = JSON.parse(message.content.toString());
-            await callback(data);
-            this.channel.ack(message); // Confirma processamento
-          } catch (error) {
-            this.logger.error('❌ Erro ao processar job:', error);
-            this.channel.nack(message); // Rejeita mensagem
-          }
-        }
-      });
-    } catch (error) {
-      this.logger.error('❌ Erro ao consumir jobs:', error);
+  private async setupQueues() {
+    // Exchange para eventos da aplicação
+    await this.channel.assertExchange('trip_events', 'direct', {
+      durable: true,
+    });
+
+    // Queue para emails
+    await this.channel.assertQueue('email_queue', { durable: true });
+    await this.channel.bindQueue('email_queue', 'trip_events', 'send-email');
+  }
+
+  async publishToQueue(queue: string, message: any) {
+    if (!this.channel) {
+      throw new Error('RabbitMQ não conectado');
     }
+
+    await this.channel.sendToQueue(
+      queue,
+      Buffer.from(JSON.stringify(message)),
+      { persistent: true },
+    );
+  }
+
+  async publishToExchange(exchange: string, routingKey: string, message: any) {
+    if (!this.channel) {
+      throw new Error('RabbitMQ não conectado');
+    }
+
+    await this.channel.publish(
+      exchange,
+      routingKey,
+      Buffer.from(JSON.stringify(message)),
+      { persistent: true },
+    );
   }
 
   async onModuleDestroy() {

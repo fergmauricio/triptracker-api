@@ -6,6 +6,10 @@ export class QueueService {
   constructor(private rabbitMQService: RabbitMQService) {}
 
   async addEmailJob(data: any) {
-    await this.rabbitMQService.publishEmailJob(data);
+    await this.rabbitMQService.publishToExchange(
+      'trip_events',
+      'send-email',
+      data,
+    );
   }
 }

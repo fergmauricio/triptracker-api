@@ -16,10 +16,26 @@ export class EmailWorkerService implements OnModuleInit {
   }
 
   private async startWorker() {
-    // Nova implementação com RabbitMQ
-    await this.rabbitMQService.consumeEmailJobs(async (data) => {
-      await this.handleSendPasswordResetEmail(data);
+    const channel = this.rabbitMQService.getChannel();
+
+    if (!channel) {
+      this.logger.error('RabbitMQ channel não disponível');
+      return;
+    }
+
+    await channel.consume('email_queue', async (message) => {
+      if (message) {
+        try {
+          const data = JSON.parse(message.content.toString());
+          await this.handleSendPasswordResetEmail(data);
+          channel.ack(message); // Confirma processamento
+        } catch (error) {
+          this.logger.error('Erro ao processar email job:', error);
+          channel.nack(message); // Rejeita mensagem
+        }
+      }
     });
+
     this.logger.log('Worker de email ouvindo RabbitMQ...');
   }
 
