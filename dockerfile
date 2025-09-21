@@ -2,23 +2,24 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-# Copiar package.json e package-lock.json
+# 1. Copiar APENAS arquivos de dependências
 COPY package*.json ./
+COPY prisma ./prisma/
 
-# Instalar dependências
-RUN npm install
+# 2. Instalar dependências de PRODUÇÃO
+RUN npm ci --only=production
 
-# Copiar o restante do código
-COPY . .
-
-# Gerar Prisma client
+# 3. Gerar Prisma client
 RUN npx prisma generate
 
-# Build da aplicação
+# 4. Copiar o restante do código
+COPY . .
+
+# 5. Build da aplicação
 RUN npm run build
 
-# Expor a porta
+# 6. Expor a porta
 EXPOSE 3000
 
-# Comando para rodar a aplicação
+# 7. Comando para rodar a aplicação
 CMD ["npm", "run", "start:prod"]

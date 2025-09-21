@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build
+dist/
+build/
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Versionamento
+.git/
+.gitignore
+README.md
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
