@@ -10,7 +10,7 @@ COPY prisma ./prisma/
 RUN npm ci --only=production
 
 # 3. Gerar Prisma client
-RUN npx prisma generate
+# RUN npx prisma generate
 
 # 4. Copiar o restante do código
 COPY . .
