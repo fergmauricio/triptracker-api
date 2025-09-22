@@ -15,6 +15,9 @@ COPY . .
 # 5. Build da aplicação
 RUN npm run build
 
+COPY start.sh .
+RUN chmod +x start.sh
+
 # 6. Expor a porta
 EXPOSE 3000
 
