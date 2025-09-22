@@ -22,4 +22,4 @@ RUN npm run build
 EXPOSE 3000
 
 # 7. Comando DIRETO
-CMD npx prisma migrate deploy && npm run start:prod
+CMD sh -c "npx prisma migrate deploy && npm run start:prod"
