@@ -23,7 +23,6 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       this.connection = await connect(rabbitmqUrl);
       this.channel = await this.connection.createChannel();
 
-      // Configura exchange e queues
       await this.setupQueues();
 
       this.logger.log('Conectado ao CloudAMQP com sucesso!');
@@ -38,12 +37,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async setupQueues() {
-    // Exchange para eventos da aplicação
     await this.channel.assertExchange('trip_events', 'direct', {
       durable: true,
     });
 
-    // Queue para emails
     await this.channel.assertQueue('email_queue', { durable: true });
     await this.channel.bindQueue('email_queue', 'trip_events', 'send-email');
   }

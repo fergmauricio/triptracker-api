@@ -12,13 +12,13 @@ async function testConnection() {
   try {
     const command = new ListBucketsCommand({});
     const response = await s3Client.send(command);
-    console.log('✅ Conexão AWS S3 bem-sucedida!');
+    console.log('Conexão AWS S3 bem-sucedida!');
     console.log(
       '📦 Buckets disponíveis:',
       response.Buckets.map((b) => b.Name),
     );
   } catch (error) {
-    console.error('❌ Erro na conexão AWS:', error.message);
+    console.error('Erro na conexão AWS:', error.message);
   }
 }
 

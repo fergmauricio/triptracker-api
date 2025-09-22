@@ -1,4 +1,3 @@
-// src/auth/auth.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,7 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 
 import { AuthController } from './auth.controller';
 import { PrismaModule } from '../prisma/prisma.module';
-import { JwtStrategy } from './strategies/jwt.strategy'; // <-- Importe a Strategy
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthService } from './auth.service';
 import { QueueModule } from 'src/queue/queue.module';
 
@@ -25,6 +24,6 @@ import { QueueModule } from 'src/queue/queue.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy], // <-- Adicione JwtStrategy aqui
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

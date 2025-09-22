@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from './aws-s3.service';
-import { UploadAvatarDto } from './dto/upload-avatar.dto';
 
 @Controller('upload')
 export class AwsS3Controller {
@@ -23,10 +22,8 @@ export class AwsS3Controller {
       throw new Error('Nenhum arquivo enviado');
     }
 
-    // Gera uma chave única para o arquivo
     const key = `avatars/${userId}-${Date.now()}-${file.originalname}`;
 
-    // Faz upload para S3
     const fileUrl = await this.awsS3Service.uploadFile(
       file.buffer,
       key,

@@ -3,7 +3,7 @@ import { EmailService } from './email/email.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule], // Para acessar variáveis de ambiente
+  imports: [ConfigModule],
   providers: [EmailService],
   exports: [EmailService],
 })
