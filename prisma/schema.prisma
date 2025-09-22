@@ -49,11 +49,11 @@ model trip {
   created_at  DateTime?   @default(now())
   updated_at  DateTime?
   user_id     Int?
-  user        user?       @relation(fields: [user_id], references: [id_user])
+  user        user?       @relation(fields: [user_id], references: [id_user], map: "trip_user_id_fk")
   tripcard    tripcard[]
   usertrips   usertrips[]
 
-  @@index([user_id], map: "trip_user_id_fkey")
+  @@index([user_id])
 }
 
 model tripcard {
@@ -63,11 +63,11 @@ model tripcard {
   title           String?     @db.VarChar(200)
   description     String?     @db.Text
   coment          coment[]
-  carddefault     carddefault @relation(fields: [id_card_default], references: [id_card_default])
-  trip            trip        @relation(fields: [id_trip], references: [id_trip])
+  carddefault     carddefault @relation(fields: [id_card_default], references: [id_card_default], map: "tripcard_card_default_fk")
+  trip            trip        @relation(fields: [id_trip], references: [id_trip], map: "tripcard_trip_fk")
 
-  @@index([id_card_default], map: "tripcard_id_card_default_fkey")
-  @@index([id_trip], map: "tripcard_id_trip_fkey")
+  @@index([id_card_default])
+  @@index([id_trip])
 }
 
 model user {
@@ -87,9 +87,9 @@ model usertrips {
   id_user_trips Int  @id @default(autoincrement())
   id_user       Int
   id_trip       Int
-  trip          trip @relation(fields: [id_trip], references: [id_trip])
-  user          user @relation(fields: [id_user], references: [id_user])
+  trip          trip @relation(fields: [id_trip], references: [id_trip], map: "usertrips_trip_fk")
+  user          user @relation(fields: [id_user], references: [id_user], map: "usertrips_user_fk")
 
-  @@index([id_trip], map: "usertrips_id_trip_fkey")
-  @@index([id_user], map: "usertrips_id_user_fkey")
+  @@index([id_trip])
+  @@index([id_user])
 }
