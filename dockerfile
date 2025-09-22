@@ -21,5 +21,5 @@ RUN npm run build
 # 6. Expor a porta
 EXPOSE 3000
 
-# 7. Comando DIRETO
+# 7. Comando DIRETO #
 CMD sh -c "npx prisma migrate deploy && npm run start:prod"
