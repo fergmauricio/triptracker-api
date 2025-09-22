@@ -4,6 +4,10 @@ import {
   UseInterceptors,
   UploadedFile,
   Body,
+  BadGatewayException,
+  BadRequestException,
+  UnsupportedMediaTypeException,
+  PayloadTooLargeException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from './aws-s3.service';
