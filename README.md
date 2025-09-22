@@ -1,98 +1,87 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 TripTracking API - Sistema de Gerenciamento de Viagens
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Tecnologias e Serviços Utilizados:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+NestJS
+TypeScript
+Prisma
+PostgreSQL
+Redis
+Docker
+AWS S3
+RabbitMQ
+Railway
+GitHub Actions
 
-## Description
+> API robusta e escalável para gerenciamento completo de viagens, em desenvolvimento com arquitetura moderna e melhores práticas de mercado.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+# 🎯 Para Recrutadores & Avaliadores Técnicos
 
-```bash
-$ npm install
+## 🔗 Acesso Rápido:
+
+- **Demo Online**: (https://triptrackingapi-production.up.railway.app)
+- **Postman Collection**: [Download aqui](https://github.com/fergmauricio/triptracker-api/releases/download/v1.0.0/TripTracking.API.-.Production.postman_collection.json)
+- **Code Review**: Disponível sob agendamento
+
+## 📞 Avaliação Técnica:
+
+_Agende uma demonstração ao vivo onde explico:_
+
+- Arquitetura e tomadas de decisão
+- Padrões de código implementados
+- Soluções para desafios técnicos
+- Planejamento de escalabilidade
+
+---
+
+## ✨ Características Principais
+
+### 🔐 **Sistema de Autenticação Avançado**
+
+- JWT com refresh tokens automáticos
+- Hash de senhas com bcrypt
+- Proteção de rotas com Guards NestJS
+- Sistema de recuperação de senha
+
+### ☁️ **Upload de Assets com AWS S3**
+
+```typescript
+// Upload direto para S3 com URLs assinadas
+await this.awsS3Service.uploadFile(file, 'avatars');
 ```
 
-## Compile and run the project
+1. Upload direto sem armazenamento local
+2. URLs temporárias assinadas para segurança
 
-```bash
-# development
-$ npm run start
+### ☁️ **Sistema de Filas com RabbitMQ/CloudAMQP**
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```typescript
+// Processamento assíncrono de emails
+await this.rabbitMQService.publish('email_queue', emailData);
 ```
 
-## Run tests
+1. Filas dedicadas para diferentes serviços
+2. Retry automático em caso de falhas
+3. Escalabilidade horizontal de workers
+4. Monitoramento em tempo real
 
-```bash
-# unit tests
-$ npm run test
+### 💾 **Cache Inteligente com Redis**
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```typescript
+@CacheKey('user_trips')
+@CacheTTL(300) // 5 minutos
+async getUserTrips(@Req() req: Request)
 ```
 
-## Deployment
+Obs.: ** Ainda em desenvolvimento **
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### 🏗️ Arquitetura do Sistema
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Client Frontend → API Gateway (NestJS) → Serviços Especializados
+│
+├── 📊 PostgreSQL (Dados)
+├── ⚡ Redis (Cache)
+├── 📨 RabbitMQ (Filas)
+└── ☁️ AWS S3 (Arquivos)
