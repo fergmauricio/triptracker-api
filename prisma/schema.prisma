@@ -18,13 +18,13 @@ model coment {
   id_comment  Int      @id @default(autoincrement())
   id_card     Int
   id_user     Int
-  description String   @db.LongText
+  description String   @db.Text
   created_at  DateTime @default(now())
-  tripcard    tripcard @relation(fields: [id_card], references: [id_trip_card])
-  user        user     @relation(fields: [id_user], references: [id_user])
+  tripcard    tripcard @relation(fields: [id_card], references: [id_trip_card], map: "coment_id_card_fk")
+  user        user     @relation(fields: [id_user], references: [id_user], map: "coment_id_user_fk")
 
-  @@index([id_card], map: "coment_id_card_fkey")
-  @@index([id_user], map: "coment_id_user_fkey")
+  @@index([id_card])
+  @@index([id_user])
 }
 
 model password_reset_tokens {
@@ -43,7 +43,7 @@ model trip {
   id_trip     Int         @id @default(autoincrement())
   title       String      @db.VarChar(100)
   thumb       String?     @db.VarChar(200)
-  description String?     @db.LongText
+  description String?     @db.Text
   start_date  DateTime?
   end_date    DateTime?
   created_at  DateTime?   @default(now())
@@ -61,7 +61,7 @@ model tripcard {
   id_trip         Int
   id_card_default Int
   title           String?     @db.VarChar(200)
-  description     String?     @db.LongText
+  description     String?     @db.Text
   coment          coment[]
   carddefault     carddefault @relation(fields: [id_card_default], references: [id_card_default])
   trip            trip        @relation(fields: [id_trip], references: [id_trip])
@@ -75,7 +75,7 @@ model user {
   name                  String                  @db.VarChar(100)
   email                 String                  @unique @db.VarChar(100)
   thumb                 String?                 @db.VarChar(200)
-  password              String                  @db.LongText
+  password              String                  @db.Text
   active                Boolean                 @default(true)
   coment                coment[]
   password_reset_tokens password_reset_tokens[]
