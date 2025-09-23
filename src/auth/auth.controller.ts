@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { QueueService } from 'src/queue/queue.service';
+import { QueueService } from '../queue/queue.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
