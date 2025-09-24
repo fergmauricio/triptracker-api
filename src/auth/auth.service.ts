@@ -1,3 +1,17 @@
+/*
+ * AuthService - Serviço completo de autenticação
+ *
+ * Responsabilidades:
+ * - Registro de novos usuários
+ * - Autenticação e login
+ * - Gerenciamento de reset de senha
+ * - Operações com tokens JWT
+ *
+ * Nota: Por simplicidade e coesão, todas as operações de auth
+ * estão mantidas em um único serviço. Para projetos em escala
+ * enterprise, considerar separação em serviços especializados.
+ */
+
 import {
   Injectable,
   UnauthorizedException,
