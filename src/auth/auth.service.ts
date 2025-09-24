@@ -1,4 +1,4 @@
-/**
+/*
  * AuthService - Serviço completo de autenticação
  *
  * Responsabilidades:
