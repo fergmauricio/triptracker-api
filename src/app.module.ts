@@ -1,28 +1,26 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+
+import { AuthModule } from './presentation/modules/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
-import { EmailWorkerService } from './workers/email-worker.service';
-import { EmailModule } from './email/email.module';
-import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
-import { AwsS3Module } from './aws-s3/aws-s3.module';
-import { AssetsModule } from './assets/assets.module';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
-    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
+
     PrismaModule,
     QueueModule,
-    EmailModule,
-    RabbitMQModule,
-    AwsS3Module,
-    AssetsModule,
+
+    AuthModule,
   ],
-  controllers: [],
-  providers: [EmailWorkerService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

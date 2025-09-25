@@ -9,7 +9,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000', // Frontend local
       'http://localhost:5173', // Vite/Reactt
-      'https://triptrackingapi-production.up.railway.app', // Production frontend
+      'https://triptrackingapi-production.up.railway.app', // Production API
       process.env.FRONTEND_URL,
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
