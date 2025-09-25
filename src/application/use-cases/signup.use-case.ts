@@ -2,12 +2,8 @@ import { User } from '../../domain/entities/user.entity';
 import { Email } from '../../domain/value-objects/email.vo';
 import { SignUpCommand } from '../dtos/signup-command';
 import { JwtAuthService } from '../../infrastructure/auth/jwt.service';
-import { DomainEventPublisher } from '../ports/domain-event-publisher.port';
-
-export interface IUserRepository {
-  findByEmail(email: Email): Promise<User | null>;
-  save(user: User): Promise<void>;
-}
+import { DomainEventPublisher } from '../../domain/ports/domain-event-publisher.port';
+import { IUserRepository } from '@domain/ports/user-repository.port';
 
 export class SignUpUseCase {
   constructor(

@@ -9,11 +9,17 @@ import { ResetPasswordUseCase } from './use-cases/reset-password.use-case';
 // Infrastructure Services
 import { JwtAuthService } from '../infrastructure/auth/jwt.service';
 
+// File Storage Use Cases
+import { UploadAvatarUseCase } from './use-cases/upload-avatar.use-case';
+import { GenerateSignedUrlUseCase } from './use-cases/generate-signed-url.use-case';
+
 // Injection Tokens
 import {
   USER_REPOSITORY,
   PASSWORD_RESET_TOKEN_REPOSITORY,
   DOMAIN_EVENT_PUBLISHER,
+  DOMAIN_EVENT_PUBLISHER,
+  FILE_STORAGE,
 } from '../infrastructure/providers';
 
 export const applicationProviders: Provider[] = [
@@ -55,5 +61,16 @@ export const applicationProviders: Provider[] = [
     useFactory: (passwordResetTokenRepository: any, userRepository: any) =>
       new ResetPasswordUseCase(passwordResetTokenRepository, userRepository),
     inject: [PASSWORD_RESET_TOKEN_REPOSITORY, USER_REPOSITORY],
+  },
+  {
+    provide: UploadAvatarUseCase,
+    useFactory: (fileStorage, userRepository, eventPublisher) =>
+      new UploadAvatarUseCase(fileStorage, userRepository, eventPublisher),
+    inject: [FILE_STORAGE, USER_REPOSITORY, DOMAIN_EVENT_PUBLISHER],
+  },
+  {
+    provide: GenerateSignedUrlUseCase,
+    useFactory: (fileStorage) => new GenerateSignedUrlUseCase(fileStorage),
+    inject: [FILE_STORAGE],
   },
 ];

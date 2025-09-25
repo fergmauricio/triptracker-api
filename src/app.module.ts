@@ -8,6 +8,8 @@ import { QueueModule } from './queue/queue.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { FileStorageModule } from './presentation/modules/file-storage.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,7 +19,7 @@ import { AppService } from './app.service';
 
     PrismaModule,
     QueueModule,
-
+    FileStorageModule,
     AuthModule,
   ],
   controllers: [AppController],

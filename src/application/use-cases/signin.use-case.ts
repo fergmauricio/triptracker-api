@@ -1,9 +1,6 @@
+import { IUserRepository } from '@domain/ports/user-repository.port';
 import { Email } from '../../domain/value-objects/email.vo';
 import { JwtAuthService } from '../../infrastructure/auth/jwt.service';
-
-export interface IUserRepository {
-  findByEmail(email: Email): Promise<any | null>;
-}
 
 export class SignInUseCase {
   constructor(

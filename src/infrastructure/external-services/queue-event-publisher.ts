@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { QueueService } from '../../queue/queue.service';
-import { DomainEventPublisher } from '../../application/ports/domain-event-publisher.port';
+import { DomainEventPublisher } from '../../domain/ports/domain-event-publisher.port';
 import { DomainEvent } from '../../domain/domain-events/domain-event';
 
 @Injectable()

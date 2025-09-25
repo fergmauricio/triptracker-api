@@ -12,11 +12,15 @@ import { PasswordHasherService } from './external-services/password-hasher.servi
 import { QueueEventPublisher } from './external-services/queue-event-publisher';
 import { EmailService } from './external-services/email/email.service';
 
+// Adapters
+import { AwsS3Adapter } from './adapters/aws-s3.adapter';
+
 // Injection Tokens
 export const USER_REPOSITORY = 'USER_REPOSITORY';
 export const PASSWORD_RESET_TOKEN_REPOSITORY =
   'PASSWORD_RESET_TOKEN_REPOSITORY';
 export const DOMAIN_EVENT_PUBLISHER = 'DOMAIN_EVENT_PUBLISHER';
+export const FILE_STORAGE = 'FILE_STORAGE';
 
 export const infrastructureProviders: Provider[] = [
   PrismaService,
@@ -32,6 +36,10 @@ export const infrastructureProviders: Provider[] = [
   EmailService,
   JwtAuthService,
   PasswordHasherService,
+  {
+    provide: FILE_STORAGE,
+    useClass: AwsS3Adapter,
+  },
   {
     provide: DOMAIN_EVENT_PUBLISHER,
     useClass: QueueEventPublisher,

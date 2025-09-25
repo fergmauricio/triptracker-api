@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { PasswordResetTokenRepository } from '../../domain/repository-interfaces/password-reset-token.repository';
 import type { UserRepository } from '../../domain/repository-interfaces/user.repository';
-import type { DomainEventPublisher } from '../ports/domain-event-publisher.port';
+import type { DomainEventPublisher } from '../../domain/ports/domain-event-publisher.port';
 import { Email } from '../../domain/value-objects/email.vo';
 import { PasswordResetTokenFactory } from '../../domain/factories/password-reset-token.factory';
 import { PasswordResetRequestedEvent } from '../../domain/domain-events/password-reset-requested.event';
