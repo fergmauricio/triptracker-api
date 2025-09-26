@@ -7,10 +7,12 @@ export class FileKey {
 
   private isValid(key: string): boolean {
     const allowedPaths = ['avatars/', 'trips/', 'maps/', 'uploads/'];
-    const isValidPath = allowedPaths.some((path) => key.startsWith(path));
-    const isValidFormat = /^[a-zA-Z0-9_\-./]+$/.test(key);
 
-    return isValidPath && isValidFormat;
+    const isValidPath = allowedPaths.some((path) => key.startsWith(path));
+    const hasPathTraversal = key.includes('..') || key.includes('//');
+    const isValidFormat = /^[a-zA-Z0-9_\-\.\/]+$/.test(key);
+
+    return isValidPath && !hasPathTraversal && isValidFormat;
   }
 
   getValue(): string {
