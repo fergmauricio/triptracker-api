@@ -25,7 +25,7 @@ import {
   ForgotPasswordUseCase,
   ResetPasswordUseCase,
 } from '../../application/use-cases';
-import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@infrastructure/adapters/auth/guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {

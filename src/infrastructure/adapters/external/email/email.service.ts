@@ -1,7 +1,7 @@
+import { EmailSender } from '@domain/ports/email-sender.port';
 import { Injectable, Logger } from '@nestjs/common';
 import * as sgMail from '@sendgrid/mail';
 import { Resend } from 'resend';
-import { EmailSender } from '../../../domain/ports/email-sender.port';
 
 @Injectable()
 export class EmailService implements EmailSender {

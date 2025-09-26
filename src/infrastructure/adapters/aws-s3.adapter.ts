@@ -19,11 +19,17 @@ export class AwsS3Adapter implements FileStorage {
     const region = this.configService.get('AWS_REGION');
     const accessKeyId = this.configService.get('AWS_ACCESS_KEY_ID');
     const secretAccessKey = this.configService.get('AWS_SECRET_ACCESS_KEY');
-    this.bucketName = this.configService.get('AWS_S3_BUCKET_NAME');
+    const bucketName = this.configService.get('AWS_S3_BUCKET_NAME');
 
-    if (!region || !accessKeyId || !secretAccessKey || !this.bucketName) {
+    if (!region || !accessKeyId || !secretAccessKey || !bucketName) {
+      const missingVars: string[] = [];
+      if (!region) missingVars.push('AWS_REGION');
+      if (!accessKeyId) missingVars.push('AWS_ACCESS_KEY_ID');
+      if (!secretAccessKey) missingVars.push('AWS_SECRET_ACCESS_KEY');
+      if (!bucketName) missingVars.push('AWS_S3_BUCKET_NAME');
+
       throw new Error(
-        'Variáveis de ambiente AWS não configuradas corretamente',
+        `Variáveis de ambiente AWS não configuradas: ${missingVars.join(', ')}`,
       );
     }
 
@@ -35,6 +41,7 @@ export class AwsS3Adapter implements FileStorage {
       },
     });
 
+    this.bucketName = bucketName;
     this.logger.log(`AwsS3Adapter configurado para bucket: ${this.bucketName}`);
   }
 

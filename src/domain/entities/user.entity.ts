@@ -11,6 +11,7 @@ export class User {
   private password: PasswordHash;
   private active: boolean;
   private domainEvents: DomainEvent[] = [];
+  private avatarUrl: string | null = null;
 
   private constructor(
     id: UserId,
@@ -54,14 +55,25 @@ export class User {
     email: string,
     passwordHash: string,
     active: boolean,
+    thumb?: string | null,
   ): User {
-    return new User(
+    const user = new User(
       new UserId(id),
       name,
       new Email(email),
       PasswordHash.fromHash(passwordHash),
       active,
     );
+
+    if (thumb) {
+      (user as any).avatarUrl = thumb;
+    }
+
+    return user;
+  }
+
+  updateAvatar(avatarUrl: string): void {
+    this.avatarUrl = avatarUrl;
   }
 
   changeName(name: string): void {
@@ -123,6 +135,10 @@ export class User {
 
   getPasswordHash(): string {
     return this.password.getValue();
+  }
+
+  getAvatarUrl(): string | null {
+    return this.avatarUrl;
   }
 
   isActive(): boolean {

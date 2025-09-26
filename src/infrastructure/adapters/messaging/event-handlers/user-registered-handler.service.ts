@@ -1,5 +1,6 @@
 import { Email } from '@domain/value-objects/email.vo';
-import { EmailService } from '@infrastructure/external-services/email/email.service';
+import { EmailService } from '@infrastructure/adapters/external/email/email.service';
+
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()

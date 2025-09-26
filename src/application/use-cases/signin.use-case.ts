@@ -1,6 +1,6 @@
 import { IUserRepository } from '@domain/ports/user-repository.port';
 import { Email } from '../../domain/value-objects/email.vo';
-import { JwtAuthService } from '../../infrastructure/auth/jwt.service';
+import { JwtAuthService } from '@infrastructure/index';
 
 export class SignInUseCase {
   constructor(

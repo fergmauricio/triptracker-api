@@ -8,25 +8,22 @@ import { AuthController } from '../controllers/auth.controller';
 
 // Providers
 import { infrastructureProviders } from '../../infrastructure/providers';
-import { applicationProviders } from '../../application/providers';
 
 // Strategies e Guards
-import { JwtStrategy } from '../../infrastructure/auth/strategies/jwt.strategy';
-import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
-import { RabbitMQModule } from '../../infrastructure/messaging/rabbitmq/rabbitmq.module';
-import { MessagingModule } from '../../infrastructure/messaging/messaging.module';
-import { EmailModule } from '../../infrastructure/external-services/email/email.module';
-import { QueueModule } from '../../queue/queue.module';
+import { JwtStrategy } from '../../infrastructure/adapters/auth/strategies/jwt.strategy';
+import { JwtAuthGuard } from '../../infrastructure/adapters/auth/guards/jwt-auth.guard';
+import { JwtAuthService } from '../../infrastructure/adapters/auth/jwt.service';
+// Modules
+import { RabbitMQModule } from '../../infrastructure/adapters/messaging/rabbitmq/rabbitmq.module';
+import { QueueModule } from '../../infrastructure/adapters/messaging/queue/queue.module';
+import { authProviders } from '@application/providers/auth.providers';
 
 @Module({
   imports: [
     PassportModule,
     ConfigModule,
     RabbitMQModule,
-    MessagingModule,
-    EmailModule,
     QueueModule,
-
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -39,7 +36,8 @@ import { QueueModule } from '../../queue/queue.module';
   controllers: [AuthController],
   providers: [
     ...infrastructureProviders,
-    ...applicationProviders,
+    ...authProviders,
+    JwtAuthService,
     JwtStrategy,
     JwtAuthGuard,
   ],
@@ -47,6 +45,7 @@ import { QueueModule } from '../../queue/queue.module';
     'USER_REPOSITORY',
     'PASSWORD_RESET_TOKEN_REPOSITORY',
     'DOMAIN_EVENT_PUBLISHER',
+    JwtAuthService,
     JwtAuthGuard,
   ],
 })

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { FileStorage } from '../../domain/ports/file-storage.port';
-import { IUserRepository } from '../../domain/ports/user-repository.port';
-import { DomainEventPublisher } from '../../domain/ports/domain-event-publisher.port';
-import { UploadAvatarCommand } from '../dtos/upload-avatar-command';
+import type { FileStorage } from '../../domain/ports/file-storage.port';
+import type { IUserRepository } from '../../domain/ports/user-repository.port';
+
 import { FileKey } from '../../domain/value-objects/file-key.vo';
 import { FileType } from '../../domain/value-objects/file-type.vo';
 import { FileSize } from '../../domain/value-objects/file-size.vo';
 import { AvatarUploadedEvent } from '../../domain/domain-events/avatar-uploaded.event';
+import { UploadAvatarCommand } from '@application/commands/upload-avatar-command';
+import type { DomainEventPublisher } from '@domain/ports/domain-event-publisher.port';
+import { UserId } from '@domain/value-objects/user-id.vo';
 
 @Injectable()
 export class UploadAvatarUseCase {
@@ -18,7 +20,7 @@ export class UploadAvatarUseCase {
 
   async execute(
     command: UploadAvatarCommand,
-  ): Promise<{ url: string; key: string }> {
+  ): Promise<{ url: string; signedUrl: string; key: string }> {
     try {
       const fileType = new FileType(command.file.mimetype);
       const fileSize = new FileSize(command.file.size);
@@ -34,7 +36,12 @@ export class UploadAvatarUseCase {
         fileType.getValue(),
       );
 
-      const user = await this.userRepository.findById(command.userId);
+      const signedUrl = await this.fileStorage.getSignedUrl(fileKey.getValue());
+
+      const userIdVO = new UserId(parseInt(command.userId));
+
+      const user = await this.userRepository.findById(userIdVO);
+
       if (user) {
         user.updateAvatar(fileUrl);
         await this.userRepository.save(user);
@@ -49,6 +56,7 @@ export class UploadAvatarUseCase {
 
       return {
         url: fileUrl,
+        signedUrl: signedUrl,
         key: fileKey.getValue(),
       };
     } catch (error) {

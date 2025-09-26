@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PasswordResetRequestedEvent } from '../../../domain/domain-events/password-reset-requested.event';
-import { EmailService } from '../../external-services/email/email.service';
+
+import { EmailService } from '@infrastructure/adapters/external/email/email.service';
+import { PasswordResetRequestedEvent } from '@domain/domain-events/password-reset-requested.event';
 
 @Injectable()
 export class PasswordResetEventHandler {

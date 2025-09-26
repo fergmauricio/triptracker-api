@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+
+import { EmailService } from '@infrastructure/adapters/external/email/email.service';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
-import { EmailService } from '../../external-services/email/email.service';
 
 @Injectable()
 export class EmailEventHandler implements OnModuleInit {

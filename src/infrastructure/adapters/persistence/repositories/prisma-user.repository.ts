@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { UserRepository } from '../../../domain/repository-interfaces/user.repository';
-import { User } from '../../../domain/entities/user.entity';
-import { UserId } from '../../../domain/value-objects/user-id.vo';
-import { Email } from '../../../domain/value-objects/email.vo';
+
+import { UserRepository } from '../../../../domain/repository-interfaces/user.repository';
+import { User } from '../../../../domain/entities/user.entity';
+import { UserId } from '../../../../domain/value-objects/user-id.vo';
+import { Email } from '../../../../domain/value-objects/email.vo';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -22,6 +23,7 @@ export class PrismaUserRepository implements UserRepository {
       userData.email,
       userData.password,
       userData.active,
+      userData.thumb,
     );
   }
 
@@ -38,6 +40,7 @@ export class PrismaUserRepository implements UserRepository {
       userData.email,
       userData.password,
       userData.active,
+      userData.thumb,
     );
   }
 
@@ -54,6 +57,7 @@ export class PrismaUserRepository implements UserRepository {
       email: user.getEmail().getValue(),
       password: user.getPasswordHash(),
       active: user.isActive(),
+      thumb: user.getAvatarUrl(),
     };
 
     if (user.getId().isTemporary()) {

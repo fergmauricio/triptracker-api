@@ -1,9 +1,10 @@
 import { User } from '../../domain/entities/user.entity';
 import { Email } from '../../domain/value-objects/email.vo';
-import { SignUpCommand } from '../dtos/signup-command';
-import { JwtAuthService } from '../../infrastructure/auth/jwt.service';
+
 import { DomainEventPublisher } from '../../domain/ports/domain-event-publisher.port';
 import { IUserRepository } from '@domain/ports/user-repository.port';
+import { JwtAuthService } from '@infrastructure/index';
+import { SignUpCommand } from '@application/commands/signup-command';
 
 export class SignUpUseCase {
   constructor(
