@@ -63,28 +63,23 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 
 ### ✅ Stack Tecnológica
 
-**Framework Core**
-
+- **Framework Core**
 - NestJS - Framework Node.js para enterprise.
 - TypeScript - Type safety e melhor experiência do desenvolvedor.
 
-**Camada de Dados**
-
+- **Camada de Dados**
 - PostgreSQL - Database principal com Prisma ORM.
 - Prisma - Cliente de database type-safe com migrations.
 
-**Mensageria & Processamento Assíncrono**
-
+- **Mensageria & Processamento Assíncrono**
 - RabbitMQ - Message broker para arquitetura orientada a eventos.
 - Domain Events - Processamento assíncrono com entrega garantida.
 
-**Serviços Cloud**
-
+- **Serviços Cloud**
 - AWS S3 - Armazenamento de arquivos com URLs assinadas.
 - Múltiplos Provedores de Email - SendGrid & Resend com fallback.
 
-**Infraestrutura**
-
+- **Infraestrutura**
 - Docker - Containerização.
 - Railway - Plataforma de deployment.
 - GitHub Actions - Pipeline de CI/CD.
@@ -93,15 +88,13 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 
 ### 🎯 Para Recrutadores Técnicos
 
-**Decisões Arquiteturais Demonstradas:**
-
+- **Decisões Arquiteturais Demonstradas:**
 - Clean Architecture para maintainability e testabilidade.
 - Domain-Driven Design para modelagem de lógica de negócio complexa.
 - Event-Driven Architecture para escalabilidade e resiliência.
 - Dependency Injection com separação adequada de concerns.
 
-**Destaques de Qualidade de Código:**
-
+- **Destaques de Qualidade de Código:**
 - Type Safety em toda a codebase.
 - Error Handling adequado com exceções específicas do domínio.
 - Validation em múltiplas camadas (DTO, Domain, Database).
