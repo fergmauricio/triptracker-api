@@ -37,7 +37,7 @@ src/
 
 <a id="tecnologias"></a>
 
-### 🛠️ Tecnologias
+## 🛠️ Tecnologias
 
 ### ✅ Padrões Domain-Driven Design
 
@@ -91,7 +91,7 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 
 <a id="para-recrutadores"></a>
 
-### 🎯 Para Recrutadores Técnicos
+## 🎯 Para Recrutadores Técnicos
 
 **Decisões Arquiteturais Demonstradas:**
 
@@ -109,7 +109,7 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 
 <a id="instalação"></a>
 
-### 🚀 Instalação e Configuração
+## 🚀 Instalação e Configuração
 
 ```
 # Clone o repositório
@@ -125,7 +125,7 @@ cp .env.example .env
 # Execute as migrations do banco
 npx prisma migrate dev
 
-# Inicie os container do Docker
+# Inicie os containers do Docker
 docker-compose up -d
 
 # Inicie a aplicação
@@ -134,11 +134,11 @@ npm run start:dev
 
 <a id="contribuição"></a>
 
-### 🤝 Contribuição
+## 🤝 Contribuição
 
 Este projeto foi criado para demonstração de habilidades técnicas, mas contribuições são bem-vindas.
 Entre em contato no e-mail: mauricioferg@gmail.com
 
-### ✅ Licença
+## ✅ Licença
 
 MIT License - veja o arquivo LICENSE para detalhes.
