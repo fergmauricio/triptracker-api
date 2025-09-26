@@ -1,14 +1,14 @@
-# README.md (Português BR)
-
 # 🚀 TripTracking API - Sistema de Gerenciamento de Viagens
 
 ## Índice
 
 - [Arquitetura e Padrões](#arquitetura-e-padrões)
-- [Tecnologias](#🛠️-tecnologias)
-- [Para Recrutadores](#🎯-para-recrutadores)
-- [Instalação](#🚀-instalação)
-- [Contribuição](#🤝-contribuição)
+- [Tecnologias](#tecnologias)
+- [Para Recrutadores](#para-recrutadores)
+- [Instalação](#instalação)
+- [Contribuição](#contribuição)
+
+<a id="arquitetura-e-padrões"></a>
 
 ## Arquitetura e Padrões
 
@@ -34,6 +34,10 @@ src/
 ├── controllers/ # Endpoints REST
 └── dtos/ # Objetos de Transferência de Dados
 ```
+
+<a id="tecnologias"></a>
+
+### 🛠️ Tecnologias
 
 ### ✅ Padrões Domain-Driven Design
 
@@ -85,7 +89,9 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 - Railway - Plataforma de deployment.
 - GitHub Actions - Pipeline de CI/CD.
 
-### ✅ Para Recrutadores Técnicos
+<a id="para-recrutadores"></a>
+
+### 🎯 Para Recrutadores Técnicos
 
 **Decisões Arquiteturais Demonstradas:**
 
@@ -101,7 +107,9 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 - Validation em múltiplas camadas (DTO, Domain, Database).
 - Logging e padrões de observabilidade.
 
-### ✅ Instalação e Configuração
+<a id="instalação"></a>
+
+### 🚀 Instalação e Configuração
 
 ```
 # Clone o repositório
@@ -124,7 +132,9 @@ docker-compose up -d
 npm run start:dev
 ```
 
-### ✅ Contribuição
+<a id="contribuição"></a>
+
+### 🤝 Contribuição
 
 Este projeto foi criado para demonstração de habilidades técnicas, mas contribuições são bem-vindas.
 Entre em contato no e-mail: mauricioferg@gmail.com
