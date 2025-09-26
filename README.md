@@ -1,87 +1,134 @@
+# README.md (Português BR)
+
 # 🚀 TripTracking API - Sistema de Gerenciamento de Viagens
 
-# Tecnologias e Serviços Utilizados:
+## Índice
 
-NestJS
-TypeScript
-Prisma
-PostgreSQL
-Redis
-Docker
-AWS S3
-RabbitMQ
-Railway
-GitHub Actions
+- [Arquitetura e Padrões](#arquitetura-e-padrões)
+- [Tecnologias](#🛠️-tecnologias)
+- [Para Recrutadores](#🎯-para-recrutadores)
+- [Instalação](#🚀-instalação)
+- [Contribuição](#🤝-contribuição)
 
-> API robusta e escalável para gerenciamento completo de viagens, em desenvolvimento com arquitetura moderna e melhores práticas de mercado.
+## Arquitetura e Padrões
 
----
-
-# 🎯 Para Recrutadores & Avaliadores Técnicos
-
-## 🔗 Acesso Rápido:
-
-- **Demo Online**: (https://triptrackingapi-production.up.railway.app)
-- **Postman Collection**: [Download aqui](https://github.com/fergmauricio/triptracker-api/releases/download/v1.0.0/TripTracking.API.-.Production.postman_collection.json)
-- **Code Review**: Disponível sob agendamento
-
-## 📞 Avaliação Técnica:
-
-_Agende uma demonstração ao vivo onde explico:_
-
-- Arquitetura e tomadas de decisão
-- Padrões de código implementados
-- Soluções para desafios técnicos
-- Planejamento de escalabilidade
-
----
-
-## ✨ Características Principais
-
-### 🔐 **Sistema de Autenticação Avançado**
-
-- JWT com refresh tokens automáticos
-- Hash de senhas com bcrypt
-- Proteção de rotas com Guards NestJS
-- Sistema de recuperação de senha
-
-### ☁️ **Upload de Assets com AWS S3**
+### ✅ Clean Architecture Implementada
 
 ```typescript
-// Upload direto para S3 com URLs assinadas
-await this.awsS3Service.uploadFile(file, 'avatars');
-```
-
-1. Upload direto sem armazenamento local
-2. URLs temporárias assinadas para segurança
-
-### ☁️ **Sistema de Filas com RabbitMQ/CloudAMQP**
-
-```typescript
-// Processamento assíncrono de emails
-await this.rabbitMQService.publish('email_queue', emailData);
-```
-
-1. Filas dedicadas para diferentes serviços
-2. Retry automático em caso de falhas
-3. Escalabilidade horizontal de workers
-4. Monitoramento em tempo real
-
-### 💾 **Cache Inteligente com Redis**
-
-```typescript
-@CacheKey('user_trips')
-@CacheTTL(300) // 5 minutos
-async getUserTrips(@Req() req: Request)
-```
-
-Obs.: ** Ainda em desenvolvimento **
-
-### 🏗️ Arquitetura do Sistema
-
-Client Frontend → API Gateway (NestJS) → Serviços Especializados
+src/
+├── domain/ # Regras de Negócio & Padrões Enterprise
+│ ├── entities/ # Modelos de Domínio Ricos com Comportamento
+│ ├── value-objects/ # Validação & Restrições de Negócio
+│ ├── domain-events/ # Definições de Eventos de Domínio
+│ └── ports/ # Interfaces (Inversão de Dependência)
 │
-├── 📊 PostgreSQL (Dados)
-├── ⚡ Redis (Cache)
-├── 📨 RabbitMQ (Filas)
-└── ☁️ AWS S3 (Arquivos)
+├── application/ # Casos de Uso & Lógica de Aplicação
+│ ├── use-cases/ # Orquestração de Regras de Negócio
+│ └── commands/ # Implementação do Padrão Command
+│
+├── infrastructure/ # Frameworks & Serviços Externos
+│ ├── adapters/ # Implementações Concretas das Ports
+│ └── persistence/ # Configurações de Database & ORM
+│
+└── presentation/ # Mecanismos de Entrega (HTTP API)
+├── controllers/ # Endpoints REST
+└── dtos/ # Objetos de Transferência de Dados
+```
+
+### ✅ Padrões Domain-Driven Design
+
+- **Modelos de Domínio Ricos**: Entidades com lógica de negócio encapsulada.
+- **Value Objects**: Email, UserId, PasswordHash com validação e outros.
+- **Domain Events**: UserRegisteredEvent, PasswordResetRequestedEvent e outros.
+- **Repository Pattern**: Acesso a dados abstraído com implementação Prisma.
+
+### ✅ Arquitetura Orientada a Eventos
+
+```typescript
+// Processamento Assíncrono com RabbitMQ
+Cadastro de Usuário → UserRegisteredEvent → Serviço de Email → Email de Boas-Vindas.
+Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de Reset.
+```
+
+### ✅ Padrões Enterprise Implementados
+
+- **Ports & Adapters**: Inversão de dependência com limites claros.
+- **Factory Pattern**: Criação de PasswordResetToken.
+- **Strategy Pattern**: Múltiplos provedores de email (SendGrid/Resend).
+- **Observer Pattern**: Handlers de eventos de domínio.
+
+### ✅ Stack Tecnológica
+
+**Framework Core**
+
+- NestJS - Framework Node.js para enterprise.
+- TypeScript - Type safety e melhor experiência do desenvolvedor.
+
+**Camada de Dados**
+
+- PostgreSQL - Database principal com Prisma ORM.
+- Prisma - Cliente de database type-safe com migrations.
+
+**Mensageria & Processamento Assíncrono**
+
+- RabbitMQ - Message broker para arquitetura orientada a eventos.
+- Domain Events - Processamento assíncrono com entrega garantida.
+
+**Serviços Cloud**
+
+- AWS S3 - Armazenamento de arquivos com URLs assinadas.
+- Múltiplos Provedores de Email - SendGrid & Resend com fallback.
+
+**Infraestrutura**
+
+- Docker - Containerização.
+- Railway - Plataforma de deployment.
+- GitHub Actions - Pipeline de CI/CD.
+
+### ✅ Para Recrutadores Técnicos
+
+**Decisões Arquiteturais Demonstradas:**
+
+- Clean Architecture para maintainability e testabilidade.
+- Domain-Driven Design para modelagem de lógica de negócio complexa.
+- Event-Driven Architecture para escalabilidade e resiliência.
+- Dependency Injection com separação adequada de concerns.
+
+**Destaques de Qualidade de Código:**
+
+- Type Safety em toda a codebase.
+- Error Handling adequado com exceções específicas do domínio.
+- Validation em múltiplas camadas (DTO, Domain, Database).
+- Logging e padrões de observabilidade.
+
+### ✅ Instalação e Configuração
+
+```
+# Clone o repositório
+git clone git@github.com:fergmauricio/triptracker-api.git
+cd triptracker-api
+
+# Instale as dependências
+npm install
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+
+# Execute as migrations do banco
+npx prisma migrate dev
+
+# Inicie os container do Docker
+docker-compose up -d
+
+# Inicie a aplicação
+npm run start:dev
+```
+
+### ✅ Contribuição
+
+Este projeto foi criado para demonstração de habilidades técnicas, mas contribuições são bem-vindas.
+Entre em contato no e-mail: mauricioferg@gmail.com
+
+### ✅ Licença
+
+MIT License - veja o arquivo LICENSE para detalhes.
