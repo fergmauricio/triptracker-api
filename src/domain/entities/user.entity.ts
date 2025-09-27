@@ -93,7 +93,7 @@ export class User {
   ): Promise<void> {
     const isCurrentPasswordValid = await this.password.verify(oldPassword);
     if (!isCurrentPasswordValid) {
-      throw new Error('Current password is incorrect');
+      throw new Error('Senha incorreta');
     }
 
     this.password = await PasswordHash.create(newPassword);
