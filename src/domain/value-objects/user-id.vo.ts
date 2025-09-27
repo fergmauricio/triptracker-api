@@ -2,7 +2,7 @@ export class UserId {
   private readonly value: number;
 
   constructor(value: number) {
-    if (value === undefined || value === null || value < 0) {
+    if (value === undefined || value === null || isNaN(value) || value < 0) {
       throw new Error('Invalid user ID');
     }
     this.value = value;
