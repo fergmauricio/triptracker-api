@@ -3,13 +3,13 @@ import * as bcrypt from 'bcryptjs';
 
 jest.mock('bcryptjs');
 
-describe('PasswordHash Value Object', () => {
+describe('Objeto de Valor PasswordHash', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('when creating with valid password', () => {
-    it('should create hash successfully', async () => {
+  describe('ao criar com senha válida', () => {
+    it('deve criar hash com sucesso', async () => {
       // ARRANGE
       const mockHash = 'hashed_password_123';
       (bcrypt.hash as jest.Mock).mockResolvedValue(mockHash);
@@ -23,23 +23,23 @@ describe('PasswordHash Value Object', () => {
     });
   });
 
-  describe('when creating with invalid password', () => {
-    it('should throw error for short password', async () => {
+  describe('ao criar com senha inválida', () => {
+    it('deve lançar erro para senha curta', async () => {
       // ACT e ASSERT
       await expect(PasswordHash.create('short')).rejects.toThrow(
         'A senha deve ter no mínimo 6 caracteres.',
       );
     });
 
-    it('should throw error for empty password', async () => {
+    it('deve lançar erro para senha vazia', async () => {
       await expect(PasswordHash.create('')).rejects.toThrow(
         'A senha deve ter no mínimo 6 caracteres.',
       );
     });
   });
 
-  describe('when creating from existing hash', () => {
-    it('should create instance with provided hash', () => {
+  describe('ao criar a partir de hash existente', () => {
+    it('deve criar instância com o hash fornecido', () => {
       // ARRANGE
       const existingHash = 'pre_hashed_value';
 
@@ -51,8 +51,8 @@ describe('PasswordHash Value Object', () => {
     });
   });
 
-  describe('when verifying password', () => {
-    it('should return true for correct password', async () => {
+  describe('ao verificar senha', () => {
+    it('deve retornar true para senha correta', async () => {
       // ARRANGE
       const plainPassword = 'correctPassword';
       const passwordHash = PasswordHash.fromHash('some_hash');
@@ -66,7 +66,7 @@ describe('PasswordHash Value Object', () => {
       expect(bcrypt.compare).toHaveBeenCalledWith(plainPassword, 'some_hash');
     });
 
-    it('should return false for incorrect password', async () => {
+    it('deve retornar false para senha incorreta', async () => {
       // ARRANGE
       const passwordHash = PasswordHash.fromHash('some_hash');
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);

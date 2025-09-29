@@ -146,10 +146,10 @@ describe('AuthController', () => {
       expect(result.user_id).toBe(1);
       expect(result.email).toBe('mauricio@triptracking.com.br');
 
-      expect(signInUseCase.execute).toHaveBeenCalledWith(
-        'mauricio@triptracking.com.br',
-        'password123',
-      );
+      expect(signInUseCase.execute).toHaveBeenCalledWith({
+        email: 'mauricio@triptracking.com.br',
+        password: 'password123',
+      });
     });
 
     it('deve lidar com credenciais inválidas', async () => {
@@ -166,10 +166,10 @@ describe('AuthController', () => {
       // Act & Assert
       await expect(controller.signIn(signInDto)).rejects.toThrow();
 
-      expect(signInUseCase.execute).toHaveBeenCalledWith(
-        'mauricio@triptracking.com.br',
-        'wrong-password',
-      );
+      expect(signInUseCase.execute).toHaveBeenCalledWith({
+        email: 'mauricio@triptracking.com.br',
+        password: 'wrong-password',
+      });
     });
   });
 

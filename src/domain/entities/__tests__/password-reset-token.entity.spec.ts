@@ -6,7 +6,7 @@ jest.mock('crypto', () => ({
   randomBytes: jest.fn().mockReturnValue(Buffer.from('mocked_token_value')),
 }));
 
-describe('PasswordResetToken Entity', () => {
+describe('Entidade PasswordResetToken', () => {
   const mockUserId = new UserId(123);
 
   const now = new Date('2024-01-01T10:00:00Z');
@@ -22,8 +22,8 @@ describe('PasswordResetToken Entity', () => {
     jest.useRealTimers();
   });
 
-  describe('when creating a new token', () => {
-    it('should create token with default expiration (1 hour)', () => {
+  describe('ao criar um novo token', () => {
+    it('deve criar token com expiração padrão (1 hora)', () => {
       // ACT
       const token = PasswordResetToken.create(mockUserId);
 
@@ -35,7 +35,7 @@ describe('PasswordResetToken Entity', () => {
       expect(token.isExpired()).toBe(false);
     });
 
-    it('should create token with custom expiration time', () => {
+    it('deve criar token com tempo de expiração customizado', () => {
       // ACT: Token com expiração de 2 horas
       const token = PasswordResetToken.create(mockUserId, 2);
       const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
@@ -44,15 +44,15 @@ describe('PasswordResetToken Entity', () => {
       expect(token.getExpiresAt()).toEqual(twoHoursLater);
     });
 
-    it('should have temporary ID for new token', () => {
+    it('deve ter ID temporário para novo token', () => {
       const token = PasswordResetToken.create(mockUserId);
 
       expect(token.getId()).toBe(0); // ID 0 indica token não persistido
     });
   });
 
-  describe('when checking token expiration', () => {
-    it('should be valid if not expired', () => {
+  describe('ao verificar expiração do token', () => {
+    it('deve ser válido se não expirado', () => {
       const token = new PasswordResetToken(
         1,
         'test_token',
@@ -65,7 +65,7 @@ describe('PasswordResetToken Entity', () => {
       expect(token.isExpired()).toBe(false);
     });
 
-    it('should be expired if past expiration date', () => {
+    it('deve estar expirado se após a data de expiração', () => {
       const token = new PasswordResetToken(
         1,
         'test_token',
@@ -78,7 +78,7 @@ describe('PasswordResetToken Entity', () => {
       expect(token.isExpired()).toBe(true);
     });
 
-    it('should be expired exactly at expiration time', () => {
+    it('deve estar expirado exatamente no tempo de expiração', () => {
       const token = new PasswordResetToken(
         1,
         'test_token',
@@ -92,15 +92,15 @@ describe('PasswordResetToken Entity', () => {
     });
   });
 
-  describe('when checking token ownership', () => {
-    it('should return true for matching user ID', () => {
+  describe('ao verificar propriedade do token', () => {
+    it('deve retornar true para ID de usuário correspondente', () => {
       const token = PasswordResetToken.create(mockUserId);
       const sameUserId = new UserId(123);
 
       expect(token.belongsToUser(sameUserId)).toBe(true);
     });
 
-    it('should return false for different user ID', () => {
+    it('deve retornar false para ID de usuário diferente', () => {
       const token = PasswordResetToken.create(mockUserId);
       const differentUserId = new UserId(456);
 
@@ -108,8 +108,8 @@ describe('PasswordResetToken Entity', () => {
     });
   });
 
-  describe('when creating from existing data', () => {
-    it('should create token with provided data', () => {
+  describe('ao criar a partir de dados existentes', () => {
+    it('deve criar token com os dados fornecidos', () => {
       const existingToken = new PasswordResetToken(
         1, // ID existente
         'existing_token',
@@ -125,8 +125,8 @@ describe('PasswordResetToken Entity', () => {
     });
   });
 
-  describe('when managing domain events', () => {
-    it('should add and retrieve domain events', () => {
+  describe('ao gerenciar eventos de domínio', () => {
+    it('deve adicionar e recuperar eventos de domínio', () => {
       const token = PasswordResetToken.create(mockUserId);
 
       const mockEvent: DomainEvent = {
@@ -141,7 +141,7 @@ describe('PasswordResetToken Entity', () => {
       expect(events[0].getEventName()).toBe('TestEvent');
     });
 
-    it('should clear domain events', () => {
+    it('deve limpar eventos de domínio', () => {
       const token = PasswordResetToken.create(mockUserId);
 
       const mockEvent: DomainEvent = {
@@ -157,8 +157,8 @@ describe('PasswordResetToken Entity', () => {
     });
   });
 
-  describe('edge cases and validations', () => {
-    it('should handle token with very long expiration', () => {
+  describe('casos extremos e validações', () => {
+    it('deve lidar com token com expiração muito longa', () => {
       const token = PasswordResetToken.create(mockUserId, 24 * 365); // 1 ano
       const oneYearLater = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
 
@@ -168,28 +168,28 @@ describe('PasswordResetToken Entity', () => {
       );
     });
 
-    it('should handle token with immediate expiration', () => {
+    it('deve lidar com token com expiração imediata', () => {
       const token = PasswordResetToken.create(mockUserId, 0);
 
       expect(token.isExpired()).toBe(true);
     });
 
-    it('should have consistent createdAt date', () => {
+    it('deve ter data createdAt consistente', () => {
       const token = PasswordResetToken.create(mockUserId);
 
       expect(token.getCreatedAt().getTime()).toBeCloseTo(now.getTime(), -3);
     });
   });
 
-  describe('equality through user ID', () => {
-    it('should be equal for same user ID values', () => {
+  describe('igualdade através do ID do usuário', () => {
+    it('deve ser igual para mesmos valores de ID de usuário', () => {
       const token1 = PasswordResetToken.create(new UserId(123));
       const token2 = PasswordResetToken.create(new UserId(123));
 
       expect(token1.getUserId().equals(token2.getUserId())).toBe(true);
     });
 
-    it('should be different for different user ID values', () => {
+    it('deve ser diferente para valores diferentes de ID de usuário', () => {
       const token1 = PasswordResetToken.create(new UserId(123));
       const token2 = PasswordResetToken.create(new UserId(456));
 

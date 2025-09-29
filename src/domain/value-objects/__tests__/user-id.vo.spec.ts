@@ -1,14 +1,14 @@
 import { UserId } from '../user-id.vo';
 
-describe('UserId Value Object', () => {
-  describe('when creating with valid values', () => {
-    it('should create with positive number', () => {
+describe('Objeto de Valor UserId', () => {
+  describe('ao criar com valores válidos', () => {
+    it('deve criar com número positivo', () => {
       const userId = new UserId(123);
 
       expect(userId.getValue()).toBe(123);
     });
 
-    it('should create with zero (temporary ID)', () => {
+    it('deve criar com zero (ID temporário)', () => {
       const userId = new UserId(0);
 
       expect(userId.getValue()).toBe(0);
@@ -16,40 +16,40 @@ describe('UserId Value Object', () => {
     });
   });
 
-  describe('when creating with invalid values', () => {
-    it('should throw error for negative number', () => {
+  describe('ao criar com valores inválidos', () => {
+    it('deve lançar erro para número negativo', () => {
       expect(() => new UserId(-1)).toThrow('Invalid user ID');
     });
 
-    it('should throw error for undefined', () => {
+    it('deve lançar erro para undefined', () => {
       expect(() => new UserId(undefined as any)).toThrow('Invalid user ID');
     });
 
-    it('should throw error for null', () => {
+    it('deve lançar erro para null', () => {
       expect(() => new UserId(null as any)).toThrow('Invalid user ID');
     });
 
-    it('should throw error for NaN', () => {
+    it('deve lançar erro para NaN', () => {
       expect(() => new UserId(NaN)).toThrow('Invalid user ID');
     });
   });
 
-  describe('equality comparison', () => {
-    it('should return true for same values', () => {
+  describe('comparação de igualdade', () => {
+    it('deve retornar true para mesmos valores', () => {
       const userId1 = new UserId(123);
       const userId2 = new UserId(123);
 
       expect(userId1.equals(userId2)).toBe(true);
     });
 
-    it('should return false for different values', () => {
+    it('deve retornar false para valores diferentes', () => {
       const userId1 = new UserId(123);
       const userId2 = new UserId(456);
 
       expect(userId1.equals(userId2)).toBe(false);
     });
 
-    it('should handle zero values correctly', () => {
+    it('deve lidar com valores zero corretamente', () => {
       const tempId1 = new UserId(0);
       const tempId2 = new UserId(0);
 
@@ -57,28 +57,28 @@ describe('UserId Value Object', () => {
     });
   });
 
-  describe('temporary ID check', () => {
-    it('should return true for zero value', () => {
+  describe('verificação de ID temporário', () => {
+    it('deve retornar true para valor zero', () => {
       const tempId = new UserId(0);
 
       expect(tempId.isTemporary()).toBe(true);
     });
 
-    it('should return false for non-zero values', () => {
+    it('deve retornar false para valores não-zero', () => {
       const permanentId = new UserId(123);
 
       expect(permanentId.isTemporary()).toBe(false);
     });
   });
 
-  describe('string representation', () => {
-    it('should convert number to string', () => {
+  describe('representação em string', () => {
+    it('deve converter número para string', () => {
       const userId = new UserId(123);
 
       expect(userId.toString()).toBe('123');
     });
 
-    it('should handle zero correctly', () => {
+    it('deve lidar com zero corretamente', () => {
       const userId = new UserId(0);
 
       expect(userId.toString()).toBe('0');

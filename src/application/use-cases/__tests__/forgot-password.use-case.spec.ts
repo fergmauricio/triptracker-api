@@ -121,7 +121,6 @@ describe('ForgotPasswordUseCase', () => {
           'Se o email existir em nosso sistema, um link de redefinição será enviado',
       });
 
-      // Verifica que apenas a busca pelo usuário foi feita
       expect(mockUserRepository.findByEmail).toHaveBeenCalled();
       expect(
         mockPasswordResetTokenRepository.deleteByUserId,

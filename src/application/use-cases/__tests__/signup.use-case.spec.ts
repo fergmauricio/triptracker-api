@@ -54,7 +54,7 @@ describe('SignUpUseCase', () => {
     it('deve criar o usuário com sucesso e retornar o token de acesso', async () => {
       const command = new SignUpCommand(
         'Mauricio',
-        'john@example.com',
+        'mauricio@triptracking.com.br',
         'securePassword123',
       );
 

@@ -1,45 +1,43 @@
 import { FileType } from '../file-type.vo';
 
-describe('FileType Value Object', () => {
-  describe('when creating with valid MIME types', () => {
-    it('should accept image/jpeg', () => {
+describe('Objeto de Valor FileType', () => {
+  describe('ao criar com tipos MIME válidos', () => {
+    it('deve aceitar image/jpeg', () => {
       const fileType = new FileType('image/jpeg');
 
       expect(fileType.getValue()).toBe('image/jpeg');
     });
 
-    it('should accept image/png', () => {
+    it('deve aceitar image/png', () => {
       expect(() => new FileType('image/png')).not.toThrow();
     });
 
-    it('should accept image/gif', () => {
+    it('deve aceitar image/gif', () => {
       expect(() => new FileType('image/gif')).not.toThrow();
     });
   });
 
-  // edge cases
-  describe('when creating with invalid MIME types', () => {
-    it('should reject non-image types', () => {
+  describe('ao criar com tipos MIME inválidos', () => {
+    it('deve rejeitar tipos que não são imagem', () => {
       expect(() => new FileType('application/pdf')).toThrow(
         'Tipo de arquivo não suportado: application/pdf',
       );
     });
 
-    it('should reject unsupported image types', () => {
+    it('deve rejeitar tipos de imagem não suportados', () => {
       expect(() => new FileType('image/webp')).toThrow(
         'Tipo de arquivo não suportado: image/webp',
       );
     });
 
-    it('should reject empty string', () => {
+    it('deve rejeitar string vazia', () => {
       expect(() => new FileType('')).toThrow('Tipo de arquivo não suportado: ');
     });
   });
 
-  // MÉTODOS UTILITÁRIOS
-  describe('utility methods', () => {
-    describe('isImage() method', () => {
-      it('should return true for image types', () => {
+  describe('métodos utilitários', () => {
+    describe('método isImage()', () => {
+      it('deve retornar true para tipos de imagem', () => {
         const jpegType = new FileType('image/jpeg');
         const pngType = new FileType('image/png');
 
@@ -48,20 +46,20 @@ describe('FileType Value Object', () => {
       });
     });
 
-    describe('getExtension() method', () => {
-      it('should return extension for JPEG', () => {
+    describe('método getExtension()', () => {
+      it('deve retornar a extensão para JPEG', () => {
         const jpegType = new FileType('image/jpeg');
 
         expect(jpegType.getExtension()).toBe('jpeg');
       });
 
-      it('should return extension for PNG', () => {
+      it('deve retornar a extensão para PNG', () => {
         const pngType = new FileType('image/png');
 
         expect(pngType.getExtension()).toBe('png');
       });
 
-      it('should return extension for GIF', () => {
+      it('deve retornar a extensão para GIF', () => {
         const gifType = new FileType('image/gif');
 
         expect(gifType.getExtension()).toBe('gif');
