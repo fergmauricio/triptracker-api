@@ -63,7 +63,7 @@ describe('FileStorageController', () => {
       // Assert
       expect(result).toBeInstanceOf(UploadAvatarResponseDto);
       expect(result).toEqual({
-        message: 'Avatar uploadado com sucesso!',
+        message: 'Avatar enviado com sucesso!',
         url: 'https://bucket.s3.amazonaws.com/avatars/1-1234567890-avatar.jpg',
         key: 'avatars/1-1234567890-avatar.jpg',
         signedUrl: 'https://signed-url.com/avatars/1-1234567890-avatar.jpg',
