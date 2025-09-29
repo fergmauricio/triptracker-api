@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,8 +31,32 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      disableErrorMessages: false,
+      dismissDefaultMessages: true,
+      exceptionFactory: (errors) => {
+        const firstError = errors[0];
+        const constraints = firstError?.constraints || {};
+        const values = Object.values(constraints) || 'Dados inválidos';
+        const message = values.filter((msg) => msg !== '');
+
+        return new BadRequestException(
+          message.length === 1 ? message[0] : message,
+        );
+      },
     }),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('TripTracking API')
+    .setDescription('API para gerenciamento de viagens e itinerários')
+    .setVersion('1.0')
+    .addTag('auth', 'Operações de autenticação')
+    .addTag('files', 'Upload e gerenciamento de arquivos')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3000);
