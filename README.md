@@ -7,6 +7,7 @@
 - [Para Recrutadores](#para-recrutadores)
 - [Documentação da API](#documentacao)
 - [Instalação](#instalação)
+- [Segurança](#seguranca)
 - [Contribuição](#contribuição)
 
 <a id="arquitetura-e-padrões"></a>
@@ -155,6 +156,16 @@ docker-compose up -d
 # Inicie a aplicação
 npm run start:dev
 ```
+
+<a id="seguranca"></a>
+
+## 🔒 Segurança
+
+A API possui rate limiting básico para prevenir abuse:
+
+- **100 requests** por IP a cada **15 minutos**
+- Headers informativos incluídos nas respostas
+- Status `429 Too Many Requests` quando excedido
 
 <a id="contribuição"></a>
 
