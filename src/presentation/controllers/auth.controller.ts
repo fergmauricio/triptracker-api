@@ -107,10 +107,10 @@ export class AuthController {
     @Body() signInRequestDto: SignInRequestDto,
   ): Promise<AuthResponseDto> {
     try {
-      const result = await this.signInUseCase.execute(
-        signInRequestDto.email,
-        signInRequestDto.password,
-      );
+      const result = await this.signInUseCase.execute({
+        email: signInRequestDto.email,
+        password: signInRequestDto.password,
+      });
 
       return new AuthResponseDto(
         result.accessToken,
