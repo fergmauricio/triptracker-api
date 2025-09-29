@@ -161,11 +161,11 @@ npm run start:dev
 
 ## 🔒 Segurança
 
-A API possui rate limiting básico para prevenir abuse:
+A API possui rate limiting implementado com `@nestjs/throttler`:
 
-- **100 requests** por IP a cada **15 minutos**
+- **100 requests** por IP a cada **minuto**
+- Proteção automática em todos os endpoints
 - Headers informativos incluídos nas respostas
-- Status `429 Too Many Requests` quando excedido
 
 <a id="contribuição"></a>
 

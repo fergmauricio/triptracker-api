@@ -2,25 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: {
-      error: 'Muitas requisições',
-      message: 'Limite de requisições excedido. Tente novamente em 15 minutos.',
-      statusCode: 429,
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-
-  app.use(limiter);
 
   app.enableCors({
     origin: [
