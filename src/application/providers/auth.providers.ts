@@ -9,13 +9,19 @@ import {
   DOMAIN_EVENT_PUBLISHER,
 } from '../../infrastructure/providers';
 import { JwtAuthService } from '../../infrastructure/adapters/auth/jwt.service';
+import { StructuredLoggerService } from '@infrastructure/adapters/external/logging/structured-logger.service';
 
 export const authProviders: Provider[] = [
   {
     provide: SignUpUseCase,
-    useFactory: (userRepository, jwtAuthService, eventPublisher) =>
-      new SignUpUseCase(userRepository, jwtAuthService, eventPublisher),
-    inject: [USER_REPOSITORY, JwtAuthService, DOMAIN_EVENT_PUBLISHER],
+    useFactory: (userRepository, jwtAuthService, eventPublisher, logger) =>
+      new SignUpUseCase(userRepository, jwtAuthService, eventPublisher, logger),
+    inject: [
+      USER_REPOSITORY,
+      JwtAuthService,
+      DOMAIN_EVENT_PUBLISHER,
+      StructuredLoggerService,
+    ],
   },
   {
     provide: SignInUseCase,
