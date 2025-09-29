@@ -5,6 +5,7 @@
 - [Arquitetura e Padrões](#arquitetura-e-padrões)
 - [Tecnologias](#tecnologias)
 - [Para Recrutadores](#para-recrutadores)
+- [Documentação da API](#documentacao)
 - [Instalação](#instalação)
 - [Contribuição](#contribuição)
 
@@ -16,23 +17,34 @@
 
 ```typescript
 src/
-├── domain/ # Regras de Negócio & Padrões Enterprise
-│ ├── entities/ # Modelos de Domínio Ricos com Comportamento
-│ ├── value-objects/ # Validação & Restrições de Negócio
-│ ├── domain-events/ # Definições de Eventos de Domínio
-│ └── ports/ # Interfaces (Inversão de Dependência)
+├── domain/                          # Camada de Domínio (Core Business)
+│   ├── entities/                    # Entidades de Domínio ricas em comportamento
+│   ├── value-objects/               # Objetos de valor com validações de negócio
+│   ├── domain-events/               # Eventos de domínio para comunicação assíncrona
+│   ├── ports/                       # Interfaces para inversão de dependência
+│   ├── repository-interfaces/       # Contratos de repositórios (persistência)
+│   └── factories/                   # Fábricas para criação complexa de objetos
 │
-├── application/ # Casos de Uso & Lógica de Aplicação
-│ ├── use-cases/ # Orquestração de Regras de Negócio
-│ └── commands/ # Implementação do Padrão Command
+├── application/                     # Camada de Aplicação (Use Cases)
+│   ├── use-cases/                   # Casos de uso que orquestram o domínio
+│   ├── commands/                    # Padrão Command para operações
+│   └── providers/                   # Configuração de injeção de dependência
 │
-├── infrastructure/ # Frameworks & Serviços Externos
-│ ├── adapters/ # Implementações Concretas das Ports
-│ └── persistence/ # Configurações de Database & ORM
+├── infrastructure/                  # Camada de Infraestrutura (Details)
+│   ├── adapters/                    # Implementações concretas das ports
+│   │   ├── auth/                    # Autenticação JWT
+│   │   ├── persistence/             # Acesso a dados (Prisma)
+│   │   ├── messaging/               # Sistema de mensageria (RabbitMQ)
+│   │   └── external/                # Serviços externos (AWS, Email)
+│   ├── config/                      # Configurações da aplicação
+│   ├── validators/                  # Validações específicas
+│   └── messaging/                   # Módulo de mensageria
 │
-└── presentation/ # Mecanismos de Entrega (HTTP API)
-├── controllers/ # Endpoints REST
-└── dtos/ # Objetos de Transferência de Dados
+└── presentation/                    # Camada de Apresentação (Delivery)
+    ├── controllers/                 # Controladores REST
+    ├── dtos/                        # Data Transfer Objects
+    ├── filters/                     # Filtros de exceção
+    └── modules/                     # Módulos da camada
 ```
 
 <a id="tecnologias"></a>
@@ -106,6 +118,18 @@ Reset de Senha → PasswordResetRequestedEvent → Serviço de Email → Link de
 - Error Handling adequado com exceções específicas do domínio.
 - Validation em múltiplas camadas (DTO, Domain, Database).
 - Logging e padrões de observabilidade.
+
+<a id="documentacao"></a>
+
+## 📚 Documentação da API
+
+A API está totalmente documentada com Swagger/OpenAPI 3.0.
+
+**🔗 Acesse a Documentação Interativa:**
+
+```typescript
+https://triptrackingapi-production.up.railway.app/api/docs
+```
 
 <a id="instalação"></a>
 
