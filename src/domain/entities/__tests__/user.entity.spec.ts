@@ -7,8 +7,8 @@ jest.mock('../../value-objects/password-hash.vo');
 
 describe('User Entity', () => {
   const mockValidData = {
-    name: 'John Doe',
-    email: new Email('john@example.com'),
+    name: 'Mauricio',
+    email: new Email('mauricio@triptracking.com.br'),
     password: 'securePassword123',
   };
 
@@ -16,8 +16,8 @@ describe('User Entity', () => {
     jest.clearAllMocks();
   });
 
-  describe('when creating a new user', () => {
-    it('should create user with valid data', async () => {
+  describe('Ao criar novo usuário', () => {
+    it('Deve criar usuário com dados válidos', async () => {
       const mockPasswordHash = {
         getValue: () => 'hashed_password',
         verify: jest.fn(),
@@ -33,24 +33,24 @@ describe('User Entity', () => {
 
       // ASSERT
       expect(user.getName()).toBe(mockValidData.name);
-      expect(user.getEmail().getValue()).toBe('john@example.com');
+      expect(user.getEmail().getValue()).toBe('mauricio@triptracking.com.br');
       expect(user.isActive()).toBe(true);
       expect(PasswordHash.create).toHaveBeenCalledWith(mockValidData.password);
     });
 
-    it('should throw error for short name', async () => {
+    it('Deve gerar erro para nome curto', async () => {
       await expect(
         User.create('A', mockValidData.email, 'password'),
       ).rejects.toThrow('Name must be at least 2 characters long');
     });
 
-    it('should throw error for empty name', async () => {
+    it('Deve gerar erro para nome vazio', async () => {
       await expect(
         User.create('', mockValidData.email, 'password'),
       ).rejects.toThrow('Name must be at least 2 characters long');
     });
 
-    it('should add UserRegisteredEvent to domain events', async () => {
+    it('Deve adicionar UserRegisteredEvent ao domain events', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -67,7 +67,7 @@ describe('User Entity', () => {
       expect(events[0].getEventName()).toBe('UserRegisteredEvent');
     });
 
-    it('should have temporary ID for new user', async () => {
+    it('Deve ter um ID temporário para novos usuários', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -82,12 +82,12 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when recreating from persistence', () => {
-    it('should create user with existing ID', () => {
+  describe('Ao recriar a partir da persistência', () => {
+    it('Deve criar um usuário com ID existente', () => {
       const user = User.fromPersistence(
         123, // ID existente
-        'Jane Doe',
-        'jane@example.com',
+        'Joana',
+        'joana@triptracking.com.br',
         'pre_hashed_password',
         true,
         'avatar_url.jpg',
@@ -95,15 +95,15 @@ describe('User Entity', () => {
 
       expect(user.getId().isTemporary()).toBe(false);
       expect(user.getId().getValue()).toBe(123);
-      expect(user.getName()).toBe('Jane Doe');
+      expect(user.getName()).toBe('Joana');
       expect(user.getAvatarUrl()).toBe('avatar_url.jpg');
     });
 
-    it('should create user without avatar if not provided', () => {
+    it('deve criar usuário sem o campo avatar preenchido', () => {
       const user = User.fromPersistence(
         456,
-        'Bob Smith',
-        'bob@example.com',
+        'Laís',
+        'lais@triptracking.com.br',
         'pre_hashed_password',
         true,
       );
@@ -112,8 +112,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when updating avatar', () => {
-    it('should update avatar URL', async () => {
+  describe('Quando mudar o avatar', () => {
+    it('deve fazer update na URL do avatar', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -129,8 +129,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when changing name', () => {
-    it('should update name with valid data', async () => {
+  describe('Quando mudar o nome', () => {
+    it('deve editar o nome com dados válidos', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -145,7 +145,7 @@ describe('User Entity', () => {
       expect(user.getName()).toBe('Novo Nome');
     });
 
-    it('should throw error for invalid name', async () => {
+    it('Deve gerar erro para nomes inválidos', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -161,8 +161,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when changing password', () => {
-    it('should update password when current password is correct', async () => {
+  describe('Quando alterar a senha', () => {
+    it('Deve atualizar a senha quando a senha atual estiver correta', async () => {
       const mockOldPasswordHash = {
         getValue: () => 'old_hashed',
         verify: jest.fn().mockResolvedValue(true),
@@ -191,7 +191,7 @@ describe('User Entity', () => {
       expect(PasswordHash.create).toHaveBeenCalledWith('newPassword');
     });
 
-    it('should throw error when current password is incorrect', async () => {
+    it('Deve gerar erro quando a senha atual estiver incorreta', async () => {
       const mockPasswordHash = {
         getValue: () => 'hashed',
         verify: jest.fn().mockResolvedValue(false),
@@ -210,8 +210,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when managing activation status', () => {
-    it('should deactivate user', async () => {
+  describe('Ao gerenciar o status de ativação', () => {
+    it('Deve desativar o usuário', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -226,7 +226,7 @@ describe('User Entity', () => {
       expect(user.isActive()).toBe(false);
     });
 
-    it('should activate user', async () => {
+    it('Deve ativar o usuário', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -243,8 +243,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when verifying password', () => {
-    it('should return true for correct password', async () => {
+  describe('Ao verificar senha', () => {
+    it('Deve retornar true para senha correta', async () => {
       const mockPasswordHash = {
         getValue: () => 'hashed',
         verify: jest.fn().mockResolvedValue(true),
@@ -264,8 +264,8 @@ describe('User Entity', () => {
     });
   });
 
-  describe('when managing domain events', () => {
-    it('should clear domain events', async () => {
+  describe('Quando gerenciar domain events', () => {
+    it('Deve limpar domain events', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
@@ -282,7 +282,7 @@ describe('User Entity', () => {
       expect(user.getDomainEvents()).toHaveLength(0);
     });
 
-    it('should add custom domain events', async () => {
+    it('Deve adicionar um custom domain events', async () => {
       const mockPasswordHash = { getValue: () => 'hashed', verify: jest.fn() };
       (PasswordHash.create as jest.Mock).mockResolvedValue(mockPasswordHash);
 
