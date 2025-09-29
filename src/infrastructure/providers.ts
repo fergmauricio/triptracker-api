@@ -3,7 +3,7 @@ import { Provider } from '@nestjs/common';
 // Adapters
 import { PrismaUserRepository } from './adapters/persistence/repositories/prisma-user.repository';
 import { PrismaPasswordResetTokenRepository } from './adapters/persistence/repositories/prisma-password-reset-token.repository';
-import { AwsS3Adapter } from './adapters/persistence/aws/aws-s3.adapter';
+import { AwsS3Adapter } from './adapters/external/storage/aws-s3.adapter';
 import { PrismaService } from './adapters/persistence/prisma/prisma.service';
 import { QueueAdapter } from './adapters/messaging/queue/queue.adapter';
 import { EmailService } from './adapters/external/email/email.service';
