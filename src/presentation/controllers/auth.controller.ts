@@ -20,6 +20,13 @@ import {
   ResetPasswordRequestDto,
 } from '../dtos';
 import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+} from '@nestjs/swagger';
+import {
   SignUpUseCase,
   SignInUseCase,
   ForgotPasswordUseCase,
@@ -27,6 +34,9 @@ import {
 } from '../../application/use-cases';
 import { JwtAuthGuard } from '@infrastructure/adapters/auth/guards/jwt-auth.guard';
 
+@ApiTags('auth')
+@ApiBearerAuth()
+@Controller('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -38,6 +48,24 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Criar nova conta de usuário',
+    description: 'Registra um novo usuário no sistema e retorna token JWT',
+  })
+  @ApiBody({ type: SignUpRequestDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuário criado com sucesso',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Email já cadastrado no sistema',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Dados de entrada inválidos',
+  })
   async signUp(
     @Body() signUpRequestDto: SignUpRequestDto,
   ): Promise<AuthResponseDto> {
@@ -61,6 +89,20 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Autenticar usuário',
+    description: 'Realiza login e retorna token JWT',
+  })
+  @ApiBody({ type: SignInRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Login realizado com sucesso',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Credenciais inválidas ou conta desativada',
+  })
   async signIn(
     @Body() signInRequestDto: SignInRequestDto,
   ): Promise<AuthResponseDto> {
@@ -83,6 +125,21 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Solicitar recuperação de senha',
+    description: 'Envia email com link para redefinição de senha',
+  })
+  @ApiBody({ type: ForgotPasswordRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Email enviado se o endereço existir no sistema',
+    schema: {
+      example: {
+        message:
+          'Se o email existir em nosso sistema, um link de redefinição será enviado',
+      },
+    },
+  })
   async forgotPassword(
     @Body() forgotPasswordRequestDto: ForgotPasswordRequestDto,
   ): Promise<{ message: string }> {
@@ -97,6 +154,25 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Redefinir senha',
+    description: 'Altera a senha usando token recebido por email',
+  })
+  @ApiBody({ type: ResetPasswordRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Senha redefinida com sucesso',
+    schema: {
+      example: {
+        message: 'Senha redefinida com sucesso',
+        details: 'Você já pode fazer login com sua nova senha',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Token inválido, expirado ou usuário não encontrado',
+  })
   async resetPassword(
     @Body() resetPasswordRequestDto: ResetPasswordRequestDto,
   ): Promise<{ message: string }> {
@@ -112,6 +188,25 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
+  @ApiOperation({
+    summary: 'Obter perfil do usuário',
+    description: 'Retorna informações do usuário autenticado',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil do usuário',
+    schema: {
+      example: {
+        id: 1,
+        email: 'usuario@email.com',
+        name: 'Nome e Sobrenome',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token JWT inválido ou expirado',
+  })
   getProfile(@Request() req) {
     return {
       id: req.user.id,
