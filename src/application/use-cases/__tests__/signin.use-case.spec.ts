@@ -19,9 +19,6 @@ describe('SignInUseCase', () => {
     };
 
     useCase = new SignInUseCase(mockUserRepository, mockJwtAuthService);
-
-    // Suppress console.log
-    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {

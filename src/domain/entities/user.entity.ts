@@ -39,12 +39,7 @@ export class User {
     const password = await PasswordHash.create(plainPassword);
     const user = new User(new UserId(0), name.trim(), email, password, true);
 
-    console.log('[DEBUG] Adicionando UserRegisteredEvent ao usuário');
     user.addDomainEvent(new UserRegisteredEvent(email.getValue(), name));
-    console.log(
-      '[DEBUG] Usuário domain events:',
-      user.getDomainEvents().length,
-    );
 
     return user;
   }

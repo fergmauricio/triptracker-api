@@ -6,12 +6,16 @@ import { UserId } from '../../../domain/value-objects/user-id.vo';
 
 jest.mock('../../../domain/entities/user.entity');
 jest.mock('../../../infrastructure/adapters/auth/jwt.service');
+jest.mock(
+  '../../../infrastructure/adapters/external/logging/structured-logger.service',
+);
 
 describe('SignUpUseCase', () => {
   let useCase: SignUpUseCase;
   let mockUserRepository: any;
   let mockJwtAuthService: any;
   let mockEventPublisher: any;
+  let mockLogger: any;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -27,13 +31,18 @@ describe('SignUpUseCase', () => {
       publish: jest.fn(),
     };
 
+    mockLogger = {
+      log: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    };
+
     useCase = new SignUpUseCase(
       mockUserRepository,
       mockJwtAuthService,
       mockEventPublisher,
+      mockLogger,
     );
-
-    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -41,9 +50,8 @@ describe('SignUpUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  describe('when signing up with valid data', () => {
-    it('should create user successfully and return access token', async () => {
-      // ARRANGE
+  describe('Ao se inscrever com dados válidos', () => {
+    it('deve criar o usuário com sucesso e retornar o token de acesso', async () => {
       const command = new SignUpCommand(
         'Mauricio',
         'john@example.com',
@@ -63,10 +71,8 @@ describe('SignUpUseCase', () => {
 
       mockUserRepository.save.mockResolvedValue(undefined);
 
-      // ACT
       const result = await useCase.execute(command);
 
-      // ASSERT
       expect(result).toEqual({
         userId: 123,
         accessToken: 'jwt_token_123',
@@ -92,9 +98,8 @@ describe('SignUpUseCase', () => {
     });
   });
 
-  describe('when signing up with duplicate email', () => {
-    it('should throw EMAIL_ALREADY_EXISTS error', async () => {
-      // ARRANGE
+  describe('Ao se inscrever com e-mail duplicado', () => {
+    it('deve gerar EMAIL_ALREADY_EXISTS error', async () => {
       const command = new SignUpCommand(
         'Mauricio',
         'teste@triptracking.com.br',
@@ -107,7 +112,6 @@ describe('SignUpUseCase', () => {
       };
       mockUserRepository.findByEmail.mockResolvedValue(existingUser);
 
-      // ACT & ASSERT
       await expect(useCase.execute(command)).rejects.toThrow(
         'EMAIL_ALREADY_EXISTS',
       );
@@ -118,12 +122,11 @@ describe('SignUpUseCase', () => {
     });
   });
 
-  describe('when creating user', () => {
-    it('should publish domain events correctly', async () => {
-      // ARRANGE
+  describe('ao criar usuário', () => {
+    it('deve publicar o domínio corretamente', async () => {
       const command = new SignUpCommand(
-        'Jane Doe',
-        'jane@example.com',
+        'Laís',
+        'lais@triptracking.com.br',
         'password123',
       );
 
@@ -144,10 +147,7 @@ describe('SignUpUseCase', () => {
       mockJwtAuthService.generateAccessToken.mockResolvedValue('token');
       mockUserRepository.save.mockResolvedValue(undefined);
 
-      // ACT
       await useCase.execute(command);
-
-      // ASSERT
 
       expect(mockEventPublisher.publish).toHaveBeenCalledTimes(
         mockEvents.length,
@@ -156,20 +156,22 @@ describe('SignUpUseCase', () => {
     });
   });
 
-  describe('when command has invalid data', () => {
-    it('should propagate errors from Email validation', async () => {
-      // ARRANGE
-      const command = new SignUpCommand('John', 'invalid-email', 'password123');
+  describe('quando o command tem dados inválidos', () => {
+    it('deve propagar erros da validação de e-mail', async () => {
+      const command = new SignUpCommand(
+        'Maurício',
+        'invalid-email',
+        'password123',
+      );
 
       mockUserRepository.findByEmail.mockResolvedValue(null);
 
-      // ACT & ASSERT
       await expect(useCase.execute(command)).rejects.toThrow(
         'E-mail inválido.',
       );
     });
 
-    it('should propagate errors from User.create', async () => {
+    it('deve propagar erros do User.create', async () => {
       //
       const command = new SignUpCommand(
         'J',
@@ -183,7 +185,6 @@ describe('SignUpUseCase', () => {
         new Error('Name must be at least 2 characters long'),
       );
 
-      // ACT & ASSERT
       await expect(useCase.execute(command)).rejects.toThrow(
         'Name must be at least 2 characters long',
       );

@@ -25,9 +25,9 @@ export const authProviders: Provider[] = [
   },
   {
     provide: SignInUseCase,
-    useFactory: (userRepository, jwtAuthService) =>
-      new SignInUseCase(userRepository, jwtAuthService),
-    inject: [USER_REPOSITORY, JwtAuthService],
+    useFactory: (userRepository, jwtAuthService, logger) =>
+      new SignInUseCase(userRepository, jwtAuthService, logger),
+    inject: [USER_REPOSITORY, JwtAuthService, StructuredLoggerService],
   },
   {
     provide: ForgotPasswordUseCase,
