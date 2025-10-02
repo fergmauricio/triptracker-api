@@ -28,6 +28,7 @@ export class EmailEventHandler implements OnModuleInit {
     }
 
     try {
+      this.logger.log('Tentativa de processar evento');
       await channel.assertQueue('email_queue', { durable: true });
 
       await channel.consume('email_queue', async (message) => {
