@@ -5,6 +5,7 @@ import type { DomainEventPublisher } from '../../domain/ports/domain-event-publi
 import { Email } from '../../domain/value-objects/email.vo';
 import { PasswordResetTokenFactory } from '../../domain/factories/password-reset-token.factory';
 import { PasswordResetRequestedEvent } from '../../domain/domain-events/password-reset-requested.event';
+import { StructuredLoggerService } from '@infrastructure/adapters/external/logging/structured-logger.service';
 
 @Injectable()
 export class ForgotPasswordUseCase {
@@ -12,6 +13,7 @@ export class ForgotPasswordUseCase {
     private readonly userRepository: UserRepository,
     private readonly passwordResetTokenRepository: PasswordResetTokenRepository,
     private readonly eventPublisher: DomainEventPublisher,
+    private readonly logger: StructuredLoggerService,
   ) {}
 
   async execute(email: string): Promise<{ message: string }> {
@@ -36,6 +38,15 @@ export class ForgotPasswordUseCase {
       user.getEmail().getValue(),
       resetToken.getToken(),
       user.getName(),
+    );
+
+    this.logger.log(
+      'Tentativa de Recuperação de senha',
+      'ForgotPasswordUseCase',
+      {
+        email: user.getEmail().getValue(),
+        token: resetToken.getToken(),
+      },
     );
 
     await this.eventPublisher.publish(event);

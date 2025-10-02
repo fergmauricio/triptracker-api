@@ -6,6 +6,7 @@ import { FileStorageModule } from './presentation/modules/file-storage.module';
 import { HealthModule } from '@presentation/modules/health.module';
 import { LoggingModule } from '@infrastructure/adapters/external/logging/logging.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { MessagingModule } from '@infrastructure/messaging/messaging.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
         },
       ],
     }),
+    MessagingModule,
     LoggingModule,
     HealthModule,
     AuthModule,

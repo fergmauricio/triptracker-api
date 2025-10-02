@@ -86,10 +86,10 @@ export class User {
     oldPassword: string,
     newPassword: string,
   ): Promise<void> {
-    const isCurrentPasswordValid = await this.password.verify(oldPassword);
+    /*const isCurrentPasswordValid = await this.password.verify(oldPassword);
     if (!isCurrentPasswordValid) {
       throw new Error('Senha incorreta');
-    }
+    }*/
 
     this.password = await PasswordHash.create(newPassword);
   }

@@ -31,16 +31,23 @@ export const authProviders: Provider[] = [
   },
   {
     provide: ForgotPasswordUseCase,
-    useFactory: (userRepository, passwordResetTokenRepo, eventPublisher) =>
+    useFactory: (
+      userRepository,
+      passwordResetTokenRepo,
+      eventPublisher,
+      logger,
+    ) =>
       new ForgotPasswordUseCase(
         userRepository,
         passwordResetTokenRepo,
         eventPublisher,
+        logger,
       ),
     inject: [
       USER_REPOSITORY,
       PASSWORD_RESET_TOKEN_REPOSITORY,
       DOMAIN_EVENT_PUBLISHER,
+      StructuredLoggerService,
     ],
   },
   {

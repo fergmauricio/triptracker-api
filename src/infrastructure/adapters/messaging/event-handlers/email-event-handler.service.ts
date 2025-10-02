@@ -17,6 +17,7 @@ export class EmailEventHandler implements OnModuleInit {
   }
 
   private async setupEmailConsumer() {
+    this.logger.log('E-mail EventHandler starting...');
     const channel = this.rabbitMQService.getChannel();
 
     if (!channel) {
