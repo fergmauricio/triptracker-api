@@ -7,6 +7,7 @@ import { HealthModule } from '@presentation/modules/health.module';
 import { LoggingModule } from '@infrastructure/adapters/external/logging/logging.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { MessagingModule } from '@infrastructure/messaging/messaging.module';
+import { TripModule } from '@presentation/modules/trip.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MessagingModule } from '@infrastructure/messaging/messaging.module';
         },
       ],
     }),
+    TripModule,
     MessagingModule,
     LoggingModule,
     HealthModule,

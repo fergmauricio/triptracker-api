@@ -9,6 +9,7 @@ import { QueueAdapter } from './adapters/messaging/queue/queue.adapter';
 import { EmailService } from './adapters/external/email/email.service';
 
 import { PasswordHasherService } from './adapters/external/password-hasher.service';
+import { PrismaTripRepository } from './adapters/persistence/repositories/prisma-trip.repository';
 
 // Injection Tokens
 export const USER_REPOSITORY = 'USER_REPOSITORY';
@@ -28,8 +29,11 @@ export const infrastructureProviders: Provider[] = [
     provide: PASSWORD_RESET_TOKEN_REPOSITORY,
     useClass: PrismaPasswordResetTokenRepository,
   },
+  {
+    provide: 'TRIP_REPOSITORY',
+    useClass: PrismaTripRepository,
+  },
   EmailService,
-  //JwtAuthService,
   PasswordHasherService,
   {
     provide: FILE_STORAGE,

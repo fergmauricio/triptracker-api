@@ -2,3 +2,8 @@ export { SignUpUseCase } from './signup.use-case';
 export { SignInUseCase } from './signin.use-case';
 export { ForgotPasswordUseCase } from './forgot-password.use-case';
 export { ResetPasswordUseCase } from './reset-password.use-case';
+export { CreateTripUseCase } from './create-trip.use-case';
+export { DeleteTripUseCase } from './delete-trip.use-case';
+export { GetTripUseCase } from './get-trip.use-case';
+export { GetUserTripsUseCase } from './get-user-trips.use-case';
+export { UpdateTripUseCase } from './update-trip.use-case';
