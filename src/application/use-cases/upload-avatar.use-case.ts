@@ -9,6 +9,7 @@ import { AvatarUploadedEvent } from '../../domain/domain-events/avatar-uploaded.
 import { UploadAvatarCommand } from '@application/commands/upload-avatar-command';
 import type { DomainEventPublisher } from '@domain/ports/domain-event-publisher.port';
 import { UserId } from '@domain/value-objects/user-id.vo';
+import { UploadConfig } from '@domain/value-objects/upload-config.vo';
 
 @Injectable()
 export class UploadAvatarUseCase {
@@ -22,10 +23,17 @@ export class UploadAvatarUseCase {
     command: UploadAvatarCommand,
   ): Promise<{ url: string; signedUrl: string; key: string }> {
     try {
+      const config = UploadConfig.create('avatar');
+
       const fileType = new FileType(command.file.mimetype);
       const fileSize = new FileSize(command.file.size);
 
-      const fileKey = FileKey.createAvatarKey(
+      if (!fileSize.isWithinLimit(config.getMaxSize())) {
+        throw new Error(`ARQUIVO_MUITO_GRANDE: ${fileSize.formatSize()}`);
+      }
+
+      const fileKey = FileKey.create(
+        'avatars',
         command.userId,
         command.file.originalname,
       );

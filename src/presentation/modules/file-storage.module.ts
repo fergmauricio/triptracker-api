@@ -17,14 +17,20 @@ import { multerConfig } from '../../infrastructure/config/multer.config';
 // Módulos necessários
 import { AuthModule } from './auth.module';
 import { RabbitMQModule } from '@infrastructure/adapters/messaging/rabbitmq/rabbitmq.module';
-
-// Exports
-import { UploadAvatarUseCase } from '@application/use-cases/upload-avatar.use-case';
+import { UploadFileUseCase } from '@application/use-cases/upload-file.use-case';
+import { StructuredLoggerService } from '@infrastructure/adapters/external/logging/structured-logger.service';
 
 @Module({
   imports: [AuthModule, RabbitMQModule, MulterModule.register(multerConfig)],
   controllers: [FileStorageController],
-  providers: [...infrastructureProviders, ...fileStorageProviders],
-  exports: [FILE_STORAGE, UploadAvatarUseCase],
+  providers: [
+    ...infrastructureProviders,
+    ...fileStorageProviders,
+    {
+      provide: 'STRUCTURED_LOGGER',
+      useClass: StructuredLoggerService,
+    },
+  ],
+  exports: [FILE_STORAGE, UploadFileUseCase],
 })
 export class FileStorageModule {}

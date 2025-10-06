@@ -7,3 +7,4 @@ export { DeleteTripUseCase } from './delete-trip.use-case';
 export { GetTripUseCase } from './get-trip.use-case';
 export { GetUserTripsUseCase } from './get-user-trips.use-case';
 export { UpdateTripUseCase } from './update-trip.use-case';
+export { UploadFileUseCase } from './upload-file.use-case';

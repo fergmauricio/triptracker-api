@@ -6,3 +6,5 @@ export { ResetPasswordRequestDto } from './reset-password-request.dto';
 export { CreateTripRequestDto } from './create-trip-request.dto';
 export { UpdateTripRequestDto } from './update-trip-request.dto';
 export { TripResponseDto } from './trip-response.dto';
+export { UploadFileRequestDto } from './upload-file-request.dto';
+export { UploadFileResponseDto } from './upload-file-response.dto';

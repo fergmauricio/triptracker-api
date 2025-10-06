@@ -4,125 +4,168 @@ import {
   UseInterceptors,
   UploadedFile,
   Body,
-  UseFilters,
+  HttpCode,
+  HttpStatus,
+  BadRequestException,
+  UnsupportedMediaTypeException,
+  PayloadTooLargeException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiConsumes,
+  ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
 } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadAvatarUseCase } from '../../application/use-cases/upload-avatar.use-case';
-import { UploadAvatarRequestDto } from '../dtos/upload-avatar-request.dto';
-import { UploadAvatarResponseDto } from '../dtos/upload-avatar-response.dto';
-import { FileValidator } from '../../infrastructure/validators/file.validator';
-import { FileUploadExceptionFilter } from '../filters/file-upload-exception.filter';
+import { UploadFileUseCase } from '../../application/use-cases';
+import { UploadFileRequestDto, UploadFileResponseDto } from '../dtos';
 
 @ApiTags('files')
-@Controller('files')
-@UseFilters(FileUploadExceptionFilter)
+@ApiBearerAuth()
 @Controller('files')
 export class FileStorageController {
-  constructor(private readonly uploadAvatarUseCase: UploadAvatarUseCase) {}
+  constructor(private readonly uploadFileUseCase: UploadFileUseCase) {}
 
-  @Post('avatar')
+  @Post('upload')
+  @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({
-    summary: 'Upload de avatar do usuário',
-    description:
-      'Faz upload de imagem de avatar para o usuário especificado. Formatos suportados: JPEG, PNG, GIF. Tamanho máximo: 5MB.',
-  })
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: 'Upload de arquivo genérico',
+    description:
+      'Faz upload de arquivos para diferentes categorias (avatar, trip, card)',
+  })
   @ApiBody({
-    description: 'Arquivo de imagem e ID do usuário',
     schema: {
       type: 'object',
       properties: {
         file: {
           type: 'string',
           format: 'binary',
-          description: 'Arquivo de imagem (JPEG, PNG, GIF)',
+          description: 'Arquivo para upload (imagens ou PDF)',
         },
-        userId: {
+        category: {
           type: 'string',
-          description: 'ID do usuário',
+          enum: ['avatar', 'trip', 'card'],
+          example: 'avatar',
+        },
+        entityId: {
+          type: 'string',
           example: '1',
         },
       },
-      required: ['file', 'userId'],
+      required: ['file', 'category', 'entityId'],
     },
   })
   @ApiResponse({
-    status: 201,
-    description: 'Avatar enviado com sucesso',
-    type: UploadAvatarResponseDto,
+    status: 200,
+    description: 'Arquivo enviado com sucesso',
+    type: UploadFileResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description:
-      'Arquivo inválido - tipo não suportado, tamanho excessivo ou userId inválido',
-    schema: {
-      example: {
-        success: false,
-        timestamp: '2024-01-01T00:00:00.000Z',
-        path: '/files/avatar',
-        error: {
-          message: 'Tipo de arquivo não suportado',
-          code: 'INVALID_FILE_TYPE',
-          details: 'Tipo de arquivo não suportado: application/pdf',
-        },
-      },
-    },
+    description: 'Dados de entrada inválidos',
+  })
+  @ApiResponse({
+    status: 415,
+    description: 'Tipo de arquivo não suportado',
   })
   @ApiResponse({
     status: 413,
     description: 'Arquivo muito grande',
-    schema: {
-      example: {
-        success: false,
-        timestamp: '2024-01-01T00:00:00.000Z',
-        path: '/files/avatar',
-        error: {
-          message: 'Arquivo muito grande',
-          code: 'FILE_TOO_LARGE',
-          details: 'Arquivo muito grande: 6.00MB',
-        },
-      },
-    },
   })
-  @ApiResponse({
-    status: 500,
-    description: 'Erro interno no servidor ou serviço de storage indisponível',
-    schema: {
-      example: {
-        success: false,
-        timestamp: '2024-01-01T00:00:00.000Z',
-        path: '/files/avatar',
-        error: {
-          message: 'Falha no upload para S3',
-          code: 'STORAGE_ERROR',
-          details: null,
-        },
-      },
-    },
-  })
-  async uploadAvatar(
+  async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: UploadAvatarRequestDto,
-  ): Promise<UploadAvatarResponseDto> {
-    FileValidator.validateUploadedFile(file, body.userId);
+    @Body() uploadFileRequestDto: UploadFileRequestDto,
+  ): Promise<UploadFileResponseDto> {
+    try {
+      this.validateUploadedFile(file, uploadFileRequestDto.entityId);
 
-    const result = await this.uploadAvatarUseCase.execute({
-      userId: body.userId,
-      file: file,
-    });
+      const result = await this.uploadFileUseCase.execute({
+        file,
+        category: uploadFileRequestDto.category,
+        entityId: uploadFileRequestDto.entityId,
+      });
 
-    return new UploadAvatarResponseDto(
-      result.url,
-      result.key,
-      result.signedUrl,
-    );
+      return new UploadFileResponseDto(
+        result.url,
+        result.key,
+        result.signedUrl,
+        uploadFileRequestDto.category,
+        uploadFileRequestDto.entityId,
+      );
+    } catch (error) {
+      this.handleUploadError(error);
+    }
+  }
+
+  private validateUploadedFile(
+    file: Express.Multer.File,
+    entityId: string,
+  ): void {
+    if (!file) {
+      throw new BadRequestException({
+        message: 'Nenhum arquivo enviado',
+        details: 'Selecione um arquivo para upload',
+        code: 'MISSING_FILE',
+      });
+    }
+
+    if (!entityId) {
+      throw new BadRequestException({
+        message: 'Entity ID é obrigatório',
+        details: 'Informe o ID da entidade associada',
+        code: 'MISSING_ENTITY_ID',
+      });
+    }
+  }
+
+  private handleUploadError(error: any): never {
+    switch (error.message) {
+      case 'FILE_KEY_INVALIDA':
+        throw new BadRequestException({
+          message: 'Chave de arquivo inválida',
+          details: 'A chave gerada para o arquivo é inválida',
+          code: 'INVALID_FILE_KEY',
+        });
+
+      case 'TIPO_ARQUIVO_NAO_SUPORTADO':
+        throw new UnsupportedMediaTypeException({
+          message: 'Tipo de arquivo não suportado',
+          details: 'O tipo de arquivo enviado não é suportado pelo sistema',
+          code: 'UNSUPPORTED_FILE_TYPE',
+        });
+
+      case 'ARQUIVO_MUITO_GRANDE':
+        throw new PayloadTooLargeException({
+          message: 'Arquivo muito grande',
+          details: error.message,
+          code: 'FILE_TOO_LARGE',
+        });
+
+      case 'TIPO_ARQUIVO_NAO_PERMITIDO_CATEGORIA':
+        throw new BadRequestException({
+          message: 'Tipo de arquivo não permitido para esta categoria',
+          details:
+            'Verifique os tipos de arquivo permitidos para esta categoria',
+          code: 'INVALID_FILE_TYPE_FOR_CATEGORY',
+        });
+
+      case 'CATEGORIA_UPLOAD_INVALIDA':
+        throw new BadRequestException({
+          message: 'Categoria de upload inválida',
+          details: 'A categoria deve ser: avatar, trip ou card',
+          code: 'INVALID_UPLOAD_CATEGORY',
+        });
+
+      default:
+        throw new BadRequestException({
+          message: 'Erro no upload do arquivo',
+          details: error.message || 'Erro interno',
+          code: 'UPLOAD_ERROR',
+        });
+    }
   }
 }

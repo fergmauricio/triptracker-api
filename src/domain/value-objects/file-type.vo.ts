@@ -1,9 +1,15 @@
 export class FileType {
-  private readonly allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  private readonly allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'application/pdf',
+  ];
 
   constructor(private readonly value: string) {
     if (!this.isValid(value)) {
-      throw new Error(`Tipo de arquivo não suportado: ${value}`);
+      throw new Error(`TIPO_ARQUIVO_NAO_SUPORTADO`);
     }
   }
 
@@ -17,6 +23,10 @@ export class FileType {
 
   isImage(): boolean {
     return this.value.startsWith('image/');
+  }
+
+  isPdf(): boolean {
+    return this.value === 'application/pdf';
   }
 
   getExtension(): string {
