@@ -17,13 +17,13 @@ export class PrismaTripRepository implements ITripRepository {
       start_date: trip.getStartDate(),
       end_date: trip.getEndDate(),
       user_id: trip.getUserId().getValue(),
-      created_at: trip.getCreatedAt(),
-      updated_at: trip.getUpdatedAt(),
     };
 
-    await this.prisma.trip.create({
+    const created = await this.prisma.trip.create({
       data: tripData,
     });
+
+    trip.updateId(created.id_trip);
   }
 
   async findById(id: TripId): Promise<Trip | null> {

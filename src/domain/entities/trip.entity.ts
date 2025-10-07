@@ -149,6 +149,10 @@ export class Trip {
     this.updatedAt = new Date();
   }
 
+  updateId(newId: number): void {
+    this.id = new TripId(newId);
+  }
+
   // Domain Events
   addDomainEvent(event: DomainEvent): void {
     this.domainEvents.push(event);

@@ -46,8 +46,8 @@ model trip {
   description String?     @db.Text
   start_date  DateTime?
   end_date    DateTime?
-  created_at  DateTime   @default(now())
-  updated_at  DateTime
+  created_at  DateTime?   @default(now())
+  updated_at  DateTime?   @default(now())
   user_id     Int
   user        user?       @relation(fields: [user_id], references: [id_user], map: "trip_user_id_fk")
   tripcard    tripcard[]

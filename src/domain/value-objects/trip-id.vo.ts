@@ -1,6 +1,6 @@
 export class TripId {
   constructor(private readonly value: number) {
-    if (!value || value < 0) {
+    if (isNaN(value) || value < 0) {
       throw new Error('ID_VIAGEM_INVÁLIDO');
     }
   }

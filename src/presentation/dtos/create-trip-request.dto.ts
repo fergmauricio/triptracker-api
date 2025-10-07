@@ -9,7 +9,8 @@ import {
 
 export class CreateTripRequestDto {
   @ApiProperty({
-    description: 'Título da viagem',
+    description:
+      'Título da viagem - O usuário será automaticamente associado via token JWT',
     example: 'Viagem para o Rio de Janeiro',
     maxLength: 100,
   })

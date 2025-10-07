@@ -32,6 +32,9 @@ export class CreateTripUseCase {
 
       await this.tripRepository.save(trip);
 
+      const tripId = trip.getId().getValue();
+      console.log('Trip ID após save:', tripId); // Deve ser > 0
+
       this.logger.log('Viagem criada com sucesso', 'CreateTripUseCase', {
         tripId: trip.getId().getValue(),
         userId: command.userId,
