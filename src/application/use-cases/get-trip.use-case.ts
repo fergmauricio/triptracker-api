@@ -1,3 +1,4 @@
+import { FileStorage } from '@domain/ports/file-storage.port';
 import { TripId } from '../../domain/value-objects/trip-id.vo';
 import type { ITripRepository } from '@domain/ports/trip-repository.port';
 import { StructuredLoggerService } from '@infrastructure/adapters/external/logging/structured-logger.service';
@@ -5,8 +6,19 @@ import { StructuredLoggerService } from '@infrastructure/adapters/external/loggi
 export class GetTripUseCase {
   constructor(
     private readonly tripRepository: ITripRepository,
+    private readonly fileStorage: FileStorage,
+
     private readonly logger: StructuredLoggerService,
   ) {}
+
+  private isFileKey(thumb: string): boolean {
+    return (
+      thumb.startsWith('avatar/') ||
+      thumb.startsWith('trip/') ||
+      thumb.startsWith('card/') ||
+      thumb.startsWith('map/')
+    );
+  }
 
   async execute(tripId: number, userId: number): Promise<any> {
     this.logger.log('Inicializando GetTripUseCase', 'GetTripUseCase', {
@@ -39,7 +51,7 @@ export class GetTripUseCase {
         userId,
       });
 
-      return {
+      const tripData = {
         id: trip.getId().getValue(),
         title: trip.getTitle(),
         description: trip.getDescription(),
@@ -50,6 +62,15 @@ export class GetTripUseCase {
         createdAt: trip.getCreatedAt(),
         updatedAt: trip.getUpdatedAt(),
       };
+
+      if (tripData.thumb && this.isFileKey(tripData.thumb)) {
+        tripData.thumb = await this.fileStorage.getSignedUrl(
+          tripData.thumb,
+          3600,
+        );
+      }
+
+      return tripData;
     } catch (error) {
       this.logger.error(
         'Falha ao recuperar viagem',

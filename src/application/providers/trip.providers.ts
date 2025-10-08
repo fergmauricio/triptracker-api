@@ -6,6 +6,7 @@ import {
   DeleteTripUseCase,
   GetUserTripsUseCase,
 } from '../use-cases';
+import { fileStorageProviders } from './file-storage.providers';
 
 export const tripProviders: Provider[] = [
   {
@@ -16,9 +17,9 @@ export const tripProviders: Provider[] = [
   },
   {
     provide: GetTripUseCase,
-    useFactory: (tripRepository, logger) =>
-      new GetTripUseCase(tripRepository, logger),
-    inject: ['TRIP_REPOSITORY', 'STRUCTURED_LOGGER'],
+    useFactory: (tripRepository, fileStorage, logger) =>
+      new GetTripUseCase(tripRepository, fileStorage, logger),
+    inject: ['TRIP_REPOSITORY', 'FILE_STORAGE', 'STRUCTURED_LOGGER'],
   },
   {
     provide: UpdateTripUseCase,
@@ -34,8 +35,8 @@ export const tripProviders: Provider[] = [
   },
   {
     provide: GetUserTripsUseCase,
-    useFactory: (tripRepository, logger) =>
-      new GetUserTripsUseCase(tripRepository, logger),
-    inject: ['TRIP_REPOSITORY', 'STRUCTURED_LOGGER'],
+    useFactory: (tripRepository, fileStorage, logger) =>
+      new GetUserTripsUseCase(tripRepository, fileStorage, logger),
+    inject: ['TRIP_REPOSITORY', 'FILE_STORAGE', 'STRUCTURED_LOGGER'],
   },
 ];
