@@ -14,8 +14,8 @@ export class FileUploadedEventHandler {
 
       this.logger.log(`Arquivo enviado processado: ${fileKey}`, {
         category,
-        entityId,
         fileUrl,
+        entityId,
       });
 
       switch (category) {

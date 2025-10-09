@@ -3,19 +3,12 @@ import { BadRequestException } from '@nestjs/common';
 export class FileValidator {
   static validateUploadedFile(
     file: Express.Multer.File,
-    entityId: string,
+    entityId?: string,
   ): void {
     if (!file) {
       throw new BadRequestException({
         message: 'Nenhum arquivo enviado',
         code: 'MISSING_FILE',
-      });
-    }
-
-    if (!entityId) {
-      throw new BadRequestException({
-        message: 'Entity ID inválido',
-        code: 'INVALID_ENTITY_ID',
       });
     }
 

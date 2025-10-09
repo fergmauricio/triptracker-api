@@ -56,7 +56,7 @@ export class FileStorageController {
           example: '1',
         },
       },
-      required: ['file', 'category', 'entityId'],
+      required: ['file', 'category'],
     },
   })
   @ApiResponse({
@@ -103,21 +103,13 @@ export class FileStorageController {
 
   private validateUploadedFile(
     file: Express.Multer.File,
-    entityId: string,
+    entityId?: string,
   ): void {
     if (!file) {
       throw new BadRequestException({
         message: 'Nenhum arquivo enviado',
         details: 'Selecione um arquivo para upload',
         code: 'MISSING_FILE',
-      });
-    }
-
-    if (!entityId) {
-      throw new BadRequestException({
-        message: 'Entity ID é obrigatório',
-        details: 'Informe o ID da entidade associada',
-        code: 'MISSING_ENTITY_ID',
       });
     }
   }

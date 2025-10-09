@@ -43,13 +43,13 @@ export class UploadFileResponseDto {
     key: string,
     signedUrl: string,
     category: string,
-    entityId: string,
+    entityId?: string,
   ) {
     this.message = 'Arquivo enviado com sucesso!';
     this.url = url;
     this.key = key;
     this.signedUrl = signedUrl;
     this.category = category;
-    this.entityId = entityId;
+    this.entityId = entityId || '';
   }
 }

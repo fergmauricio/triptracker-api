@@ -42,8 +42,8 @@ export class UploadFileUseCase {
 
       const fileKey = FileKey.create(
         config.getCategory() as any,
-        command.entityId,
         command.file.originalname,
+        command.entityId,
       );
 
       const fileUrl = await this.fileStorage.uploadFile(
@@ -84,8 +84,8 @@ export class UploadFileUseCase {
         'UploadFileUseCase',
         {
           category: command.category,
-          entityId: command.entityId,
           error: error.message,
+          entityId: command.entityId,
         },
       );
       throw error;

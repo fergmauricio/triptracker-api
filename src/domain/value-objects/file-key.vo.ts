@@ -21,12 +21,12 @@ export class FileKey {
 
   static create(
     category: 'avatars' | 'trips' | 'cards' | 'maps',
-    entityId: string,
     originalName: string,
+    entityId?: string,
   ): FileKey {
     const timestamp = Date.now();
     const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const key = `${category}/${entityId}-${timestamp}-${safeName}`;
+    const key = `${category}/${timestamp}-${safeName}`;
 
     return new FileKey(key);
   }

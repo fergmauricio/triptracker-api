@@ -7,7 +7,7 @@ export class FileUploadedEvent implements DomainEvent {
     public readonly fileKey: string,
     public readonly fileUrl: string,
     public readonly category: string,
-    public readonly entityId: string,
+    public readonly entityId?: string,
   ) {}
 
   getEventName(): string {

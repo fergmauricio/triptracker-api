@@ -22,7 +22,6 @@ export class UploadFileRequestDto {
       'ID da entidade associada. Para avatar: userId, para trip: tripId, para card: cardId',
     example: '1',
   })
-  @IsNotEmpty({ message: 'Entity ID é obrigatório' })
   @IsString({ message: 'Entity ID deve ser uma string' })
   entityId: string;
 }
