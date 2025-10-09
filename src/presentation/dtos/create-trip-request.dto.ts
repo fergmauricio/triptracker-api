@@ -33,6 +33,8 @@ export class CreateTripRequestDto {
 
   @ApiPropertyOptional({
     description: 'URL da imagem de capa',
+    type: 'string',
+    format: 'binary',
     example: 'https://example.com/thumb.jpg',
   })
   @IsString()

@@ -11,9 +11,19 @@ import { fileStorageProviders } from './file-storage.providers';
 export const tripProviders: Provider[] = [
   {
     provide: CreateTripUseCase,
-    useFactory: (tripRepository, eventPublisher, logger) =>
-      new CreateTripUseCase(tripRepository, eventPublisher, logger),
-    inject: ['TRIP_REPOSITORY', 'DOMAIN_EVENT_PUBLISHER', 'STRUCTURED_LOGGER'],
+    useFactory: (tripRepository, eventPublisher, fileStorage, logger) =>
+      new CreateTripUseCase(
+        tripRepository,
+        eventPublisher,
+        fileStorage,
+        logger,
+      ),
+    inject: [
+      'TRIP_REPOSITORY',
+      'DOMAIN_EVENT_PUBLISHER',
+      'FILE_STORAGE',
+      'STRUCTURED_LOGGER',
+    ],
   },
   {
     provide: GetTripUseCase,

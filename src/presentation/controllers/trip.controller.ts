@@ -13,6 +13,8 @@ import {
   BadRequestException,
   NotFoundException,
   ForbiddenException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,6 +23,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiParam,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import {
   CreateTripUseCase,
@@ -35,6 +38,7 @@ import {
   TripResponseDto,
 } from '../dtos';
 import { JwtAuthGuard } from '@infrastructure/adapters/auth/guards/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('trips')
 @ApiBearerAuth()
@@ -51,6 +55,8 @@ export class TripController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('thumb'))
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: 'Criar nova viagem',
     description: 'Cria uma nova viagem para o usuário autenticado',
@@ -66,6 +72,8 @@ export class TripController {
     description: 'Dados de entrada inválidos',
   })
   async createTrip(
+    @UploadedFile() thumbFile: Express.Multer.File,
+
     @Body() createTripRequestDto: CreateTripRequestDto,
     @Request() req,
   ): Promise<TripResponseDto> {
@@ -73,21 +81,28 @@ export class TripController {
       const result = await this.createTripUseCase.execute({
         title: createTripRequestDto.title,
         description: createTripRequestDto.description || null,
-        thumb: createTripRequestDto.thumb || null,
+        thumbFile: thumbFile || null,
         startDate: createTripRequestDto.startDate || null,
         endDate: createTripRequestDto.endDate || null,
         userId: req.user.id,
       });
 
-      return new TripResponseDto(
+      // Buscar a trip completa para response
+      const trip = await this.getTripUseCase.execute(
         result.tripId,
-        createTripRequestDto.title,
         req.user.id,
-        new Date(),
-        createTripRequestDto.description,
-        createTripRequestDto.thumb,
-        createTripRequestDto.startDate,
-        createTripRequestDto.endDate,
+      );
+
+      return new TripResponseDto(
+        trip.id,
+        trip.title,
+        trip.userId,
+        trip.createdAt,
+        trip.description,
+        trip.thumb, // ← Já vem com signedUrl
+        trip.startDate,
+        trip.endDate,
+        trip.updatedAt,
       );
     } catch (error) {
       this.handleUseCaseError(error);

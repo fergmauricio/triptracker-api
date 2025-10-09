@@ -6,7 +6,7 @@ export class FileKey {
   }
 
   private isValid(key: string): boolean {
-    const allowedPaths = ['avatar/', 'trip/', 'card/', 'map/'];
+    const allowedPaths = ['avatars/', 'trips/', 'cards/', 'maps/'];
 
     const hasPathTraversal = key.includes('..') || key.includes('//');
     const isValidFormat = /^[a-zA-Z0-9_\-\.\/]+$/.test(key);
@@ -27,7 +27,7 @@ export class FileKey {
     const timestamp = Date.now();
     const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, '_');
     const key = `${category}/${timestamp}-${safeName}`;
-
+    console.log('key', key);
     return new FileKey(key);
   }
 
