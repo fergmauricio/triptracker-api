@@ -40,10 +40,10 @@ export class GetUserTripsUseCase {
 
   private isFileKey(thumb: string): boolean {
     return (
-      thumb.startsWith('avatar/') ||
-      thumb.startsWith('trip/') ||
-      thumb.startsWith('card/') ||
-      thumb.startsWith('map/')
+      thumb.startsWith('avatars/') ||
+      thumb.startsWith('trips/') ||
+      thumb.startsWith('cards/') ||
+      thumb.startsWith('maps/')
     );
   }
 }
